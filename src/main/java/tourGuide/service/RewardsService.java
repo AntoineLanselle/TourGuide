@@ -5,7 +5,7 @@ import gpsUtil.location.Location;
 import tourGuide.domain.User;
 
 public interface RewardsService {
-	
+		
 	public void setProximityBuffer(int proximityBuffer);
 
 	public void setDefaultProximityBuffer();

@@ -36,6 +36,4 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
-	// TODO public void deleteUser(User user) ?
-
 }

@@ -9,7 +9,7 @@ import tripPricer.Provider;
 
 public interface TourGuideService {
 
-	public VisitedLocation getUserLocation(User user);
+	public VisitedLocation getLastUserLocation(User user);
 
 	public List<Provider> getTripDeals(User user);
 
