@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import tourGuide.domain.User;
@@ -38,7 +37,7 @@ public class TourGuideController {
 
 	@RequestMapping("/getLocation")
 	public ResponseEntity<Location> getLocation(@RequestParam String userName) {
-		VisitedLocation visitedLocation = tourGuideService.getUserLocation(userService.getUser(userName));
+		VisitedLocation visitedLocation = tourGuideService.getLastVisitedLocation(userService.getUser(userName));
 		return ResponseEntity.status(HttpStatus.OK).body(visitedLocation.location);
 	}
 
@@ -53,11 +52,11 @@ public class TourGuideController {
 	// attractions.
 	// The reward points for visiting each Attraction.
 	// Note: Attraction reward points can be gathered from RewardsCentral
-	@RequestMapping("/getNearbyAttractions")
+	/*@RequestMapping("/getNearbyAttractions")
 	public ResponseEntity<List<Attraction>> getNearbyAttractions(@RequestParam String userName) {
 		VisitedLocation visitedLocation = tourGuideService.getUserLocation(userService.getUser(userName));
 		return ResponseEntity.status(HttpStatus.OK).body(tourGuideService.getNearByAttractions(visitedLocation));
-	}
+	}*/
 
 	@RequestMapping("/getRewards")
 	public ResponseEntity<List<UserReward>> getRewards(@RequestParam String userName) {
@@ -82,9 +81,11 @@ public class TourGuideController {
 		List<User> allUsers = userService.getAllUsers();
 		Map<String, Object> currentLocations = new HashMap<String, Object>();
 		Map<String, Double> userCoord = new LinkedHashMap<String, Double>();
+		VisitedLocation userLocation;
 		for (User user : allUsers) {
-			userCoord.put("latitude", user.getLastVisitedLocation().location.latitude);
-			userCoord.put("longitude", user.getLastVisitedLocation().location.longitude);
+			userLocation = tourGuideService.trackUserLocation(user);
+			userCoord.put("latitude", userLocation.location.latitude);
+			userCoord.put("longitude", userLocation.location.longitude);
 			currentLocations.put(user.getUserId().toString(), userCoord);
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(currentLocations);

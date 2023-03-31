@@ -18,17 +18,17 @@ public class TourGuideServiceImpl implements TourGuideService {
 	// TODO private Logger logger = LoggerFactory.getLogger(TourGuideServiceImpl.class);
 
 	private final GpsUtil gpsUtil;
-	private final RewardsService rewardsService;
 	private final TripPricer tripPricer;
+	private final RewardsService rewardsService;
 	private static final String tripPricerApiKey = "test-server-api-key";
 
-	public TourGuideServiceImpl(GpsUtil gpsUtil, RewardsService rewardsService) {
+	public TourGuideServiceImpl(GpsUtil gpsUtil, RewardsService rewardsService, TripPricer tripPricer) {
 		this.gpsUtil = gpsUtil;
 		this.rewardsService = rewardsService;
-		tripPricer = new TripPricer();
+		this.tripPricer = tripPricer;
 	}
 
-	public VisitedLocation getLastUserLocation(User user) {
+	public VisitedLocation getLastVisitedLocation(User user) {
 		//avant hier toronto, hier paris , aujourd'hui Lille
 		VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ? user.getLastVisitedLocation()
 				: trackUserLocation(user);

@@ -15,9 +15,9 @@ public class User {
 	private String phoneNumber;
 	private String emailAddress;
 	private Date latestLocationTimestamp;
+	private UserPreferences userPreferences = new UserPreferences();
 	private List<VisitedLocation> visitedLocations = new ArrayList<>();
 	private List<UserReward> userRewards = new ArrayList<>();
-	private UserPreferences userPreferences = new UserPreferences();
 	private List<Provider> tripDeals = new ArrayList<>();
 	
 	public User(UUID userId, String userName, String phoneNumber, String emailAddress) {

@@ -16,5 +16,9 @@ public class UserRepository {
 	public Map<String, User> getInternalUserMap() {
 		return this.internalUserMap;
 	}
+	
+	public void setInternalUserMap(String username, User user) {
+		this.internalUserMap.put(username, user);
+	}
 
 }

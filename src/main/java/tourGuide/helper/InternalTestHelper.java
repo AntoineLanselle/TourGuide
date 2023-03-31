@@ -7,36 +7,30 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import tourGuide.domain.User;
+import tourGuide.repositories.UserRepository;
 
 public class InternalTestHelper {
 
+	@Autowired
+	private UserRepository userRepository;
+	
 	// Set this default up to 100,000 for testing
 	private static int internalUserNumber = 100;
 	
-	public static void setInternalUserNumber(int internalUserNumber) {
-		InternalTestHelper.internalUserNumber = internalUserNumber;
-	}
-	
-	public static int getInternalUserNumber() {
-		return internalUserNumber;
-	}
-	
-	
-	/************************************************/
-
-	/*
 	public void initializeInternalUsers() {
-		IntStream.range(0, InternalTestHelper.getInternalUserNumber()).forEach(i -> {
+		IntStream.range(0, internalUserNumber).forEach(i -> {
 			String userName = "internalUser" + i;
 			String phone = "000";
 			String email = userName + "@tourGuide.com";
 			User user = new User(UUID.randomUUID(), userName, phone, email);
 			generateUserLocationHistory(user);
 			
-			internalUserMap.put(userName, user);
+			userRepository.setInternalUserMap(userName, user);
 		});
 	}
 	
@@ -62,5 +56,5 @@ public class InternalTestHelper {
 		LocalDateTime localDateTime = LocalDateTime.now().minusDays(new Random().nextInt(30));
 	    return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
 	}
-	*/
+	
 }
