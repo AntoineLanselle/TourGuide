@@ -1,13 +1,16 @@
 package tourGuide.service;
 
+import com.google.common.collect.ComparisonChain;
 import gpsUtil.location.Attraction;
+import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tourGuide.DTO.TouristAttractionDetailsDTO;
 import tourGuide.domain.User;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TourGuideServiceImpl implements TourGuideService {
@@ -18,6 +21,26 @@ public class TourGuideServiceImpl implements TourGuideService {
     private GpsUtilService gpsUtilService;
     @Autowired
     private RewardsService rewardsService;
+
+    @Override
+    public List<TouristAttractionDetailsDTO> getFiveClosestAttractions(User user) {
+        List<TouristAttractionDetailsDTO> attractionDistance = new ArrayList<>();
+        Location userLocation = getLastVisitedLocation(user).location;
+        for (Attraction attraction : gpsUtilService.getAttractions()) {
+            Location attractionLocation = new Location(attraction.latitude, attraction.longitude);
+            TouristAttractionDetailsDTO attractionDetailsDTO = new TouristAttractionDetailsDTO(
+                    attraction.attractionName,
+                    attractionLocation,
+                    userLocation,
+                    rewardsService.getDistance(userLocation, attractionLocation),
+                    rewardsService.getRewardPoints(attraction, user));
+            attractionDistance.add(attractionDetailsDTO);
+        }
+
+        Collections.sort(attractionDistance, (a1, a2) -> ComparisonChain.start()
+                .compare(a2.getDistance(), a1.getDistance()).result());
+        return attractionDistance.subList(0, 5);
+    }
 
     @Override
     public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {

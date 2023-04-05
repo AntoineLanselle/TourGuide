@@ -1,5 +1,6 @@
 package tourGuide.controllers;
 
+import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,13 +9,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import tourGuide.DTO.TouristAttractionDetailsDTO;
 import tourGuide.domain.User;
 import tourGuide.domain.UserReward;
+import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
 import tourGuide.service.TripPricerService;
 import tourGuide.service.UserService;
 import tripPricer.Provider;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +26,7 @@ import java.util.Map;
 @RestController
 public class TourGuideController {
 
-    // private Logger logger = LoggerFactory.getLogger(TourGuideController.class);
+    //TODO private Logger logger = LoggerFactory.getLogger(TourGuideController.class);
 
     @Autowired
     private UserService userService;
@@ -30,6 +34,8 @@ public class TourGuideController {
     private TourGuideService tourGuideService;
     @Autowired
     private TripPricerService tripPricerService;
+    @Autowired
+    private RewardsService rewardsService;
 
     @RequestMapping("/")
     public String index() {
@@ -53,20 +59,12 @@ public class TourGuideController {
     // attractions.
     // The reward points for visiting each Attraction.
     // Note: Attraction reward points can be gathered from RewardsCentral
-    /*@RequestMapping("/getNearbyAttractions")
+    @RequestMapping("/getNearbyAttractions")
     public ResponseEntity<List<TouristAttractionDetailsDTO>> getNearbyAttractions(@RequestParam String userName) {
-        List<TouristAttractionDetailsDTO> touristAttractionDetailsList = new ArrayList<>();
-
         User user = userService.getUser(userName);
-        VisitedLocation userLocation = tourGuideService.getLastVisitedLocation(user);
-        List<Attraction> closestAttractions = tourGuideService.getClosestAttractions(userLocation);
-        for (Attraction attraction : closestAttractions) {
-            TouristAttractionDetailsDTO touristAttractionDetails = tourGuideService.setAttractionDetails(attraction, user);
-            touristAttractionDetailsList.add(touristAttractionDetails);
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(touristAttractionDetailsList);
-    }*/
+        List<TouristAttractionDetailsDTO> closestAttractions = tourGuideService.getFiveClosestAttractions(user);
+        return ResponseEntity.status(HttpStatus.OK).body(closestAttractions);
+    }
 
     @RequestMapping("/getRewards")
     public ResponseEntity<List<UserReward>> getRewards(@RequestParam String userName) {
@@ -92,8 +90,8 @@ public class TourGuideController {
         Map<String, Object> currentLocations = new HashMap<String, Object>();
         for (User user : allUsers) {
             Map<String, Double> userCoord = new HashMap<String, Double>();
-            VisitedLocation userLocation = tourGuideService.getLastVisitedLocation(user);
             // pas d'accord avec Clément cf note du TODO.
+            VisitedLocation userLocation = tourGuideService.getLastVisitedLocation(user);
             userCoord.put("longitude", userLocation.location.longitude);
             userCoord.put("latitude", userLocation.location.latitude);
             currentLocations.put(user.getUserId().toString(), userCoord);
