@@ -1,27 +1,30 @@
 package tourGuide.repositories;
 
-import java.util.List;
-
-import org.springframework.stereotype.Repository;
-
 import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
+import gpsUtil.location.VisitedLocation;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.UUID;
 
 @Repository
 public class GpsUtilRepository {
 
-	private List<Attraction> attractionsList;
+    private GpsUtil gpsUtil;
+    private List<Attraction> attractionsList;
 
-	public GpsUtilRepository() {
-		GpsUtil gpsUtil = new GpsUtil();
-		attractionsList = gpsUtil.getAttractions();
-	}
-	
-	/**
-	 * @return the attractionsList
-	 */
-	public List<Attraction> getAttractionsList() {
-		return attractionsList;
-	}
-		
+    public GpsUtilRepository() {
+        gpsUtil = new GpsUtil();
+        attractionsList = gpsUtil.getAttractions();
+    }
+
+    public List<Attraction> getAttractions() {
+        return attractionsList;
+    }
+
+    public VisitedLocation getUserLocation(UUID userId) {
+        return gpsUtil.getUserLocation(userId);
+    }
+
 }

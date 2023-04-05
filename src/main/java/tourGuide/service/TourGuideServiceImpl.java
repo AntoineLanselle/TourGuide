@@ -1,65 +1,49 @@
 package tourGuide.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-
-import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import tourGuide.domain.User;
-import tripPricer.Provider;
-import tripPricer.TripPricer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class TourGuideServiceImpl implements TourGuideService {
 
-	// TODO private Logger logger = LoggerFactory.getLogger(TourGuideServiceImpl.class);
+    // TODO private Logger logger = LoggerFactory.getLogger(TourGuideServiceImpl.class);
 
-	private final GpsUtil gpsUtil;
-	private final TripPricer tripPricer;
-	private final RewardsService rewardsService;
-	private static final String tripPricerApiKey = "test-server-api-key";
+    @Autowired
+    private GpsUtilService gpsUtilService;
+    @Autowired
+    private RewardsService rewardsService;
 
-	public TourGuideServiceImpl(GpsUtil gpsUtil, RewardsService rewardsService, TripPricer tripPricer) {
-		this.gpsUtil = gpsUtil;
-		this.rewardsService = rewardsService;
-		this.tripPricer = tripPricer;
-	}
+    @Override
+    public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
+        List<Attraction> nearbyAttractions = new ArrayList<>();
+        for (Attraction attraction : gpsUtilService.getAttractions()) {
+            if (rewardsService.isWithinAttractionProximity(attraction, visitedLocation.location)) {
+                nearbyAttractions.add(attraction);
+            }
+        }
 
-	public VisitedLocation getLastVisitedLocation(User user) {
-		//avant hier toronto, hier paris , aujourd'hui Lille
-		VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ? user.getLastVisitedLocation()
-				: trackUserLocation(user);
-		return visitedLocation;
-	}
+        return nearbyAttractions;
+    }
 
-	public List<Provider> getTripDeals(User user) {
-		int cumulatativeRewardPoints = user.getUserRewards().stream().mapToInt(i -> i.getRewardPoints()).sum();
-		List<Provider> providers = tripPricer.getPrice(tripPricerApiKey, user.getUserId(),
-				user.getUserPreferences().getNumberOfAdults(), user.getUserPreferences().getNumberOfChildren(),
-				user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints);
-		user.setTripDeals(providers);
-		return providers;
-	}
+    @Override
+    public VisitedLocation trackUserLocation(User user) {
+        VisitedLocation visitedLocation = gpsUtilService.getUserLocation(user.getUserId());
+        user.addToVisitedLocations(visitedLocation);
+        rewardsService.calculateRewards(user);
+        return visitedLocation;
+    }
 
-	public VisitedLocation trackUserLocation(User user) {
-		VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
-		user.addToVisitedLocations(visitedLocation);
-		rewardsService.calculateRewards(user);
-		return visitedLocation;
-	}
-
-	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
-		List<Attraction> nearbyAttractions = new ArrayList<>();
-		for (Attraction attraction : gpsUtil.getAttractions()) {
-			if (rewardsService.isWithinAttractionProximity(attraction, visitedLocation.location)) {
-				nearbyAttractions.add(attraction);
-			}
-		}
-
-		return nearbyAttractions;
-	}
+    @Override
+    public VisitedLocation getLastVisitedLocation(User user) {
+        VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ? user.getLastVisitedLocation()
+                : trackUserLocation(user);
+        return visitedLocation;
+    }
 
 }

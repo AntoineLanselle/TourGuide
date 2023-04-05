@@ -5,15 +5,17 @@ import gpsUtil.location.Location;
 import tourGuide.domain.User;
 
 public interface RewardsService {
-		
-	public void setProximityBuffer(int proximityBuffer);
 
-	public void setDefaultProximityBuffer();
+    public void setProximityBuffer(int proximityBuffer);
 
-	public void calculateRewards(User user);
+    public void setDefaultProximityBuffer();
 
-	public boolean isWithinAttractionProximity(Attraction attraction, Location location);
+    public void calculateRewards(User user);
 
-	public double getDistance(Location loc1, Location loc2);
+    public boolean isWithinAttractionProximity(Attraction attraction, Location location);
+
+    public int getRewardPoints(Attraction attraction, User user);
+
+    public double getDistance(Location loc1, Location loc2);
 
 }
