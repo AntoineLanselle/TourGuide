@@ -4,6 +4,7 @@ import org.javamoney.moneta.Money;
 
 import javax.money.CurrencyUnit;
 import javax.money.Monetary;
+import java.math.BigDecimal;
 
 
 public class UserPreferences {
@@ -74,6 +75,14 @@ public class UserPreferences {
 
     public void setNumberOfChildren(int numberOfChildren) {
         this.numberOfChildren = numberOfChildren;
+    }
+
+    public CurrencyUnit getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(CurrencyUnit currency) {
+        this.currency = currency;
     }
 
 }

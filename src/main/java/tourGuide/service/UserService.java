@@ -1,7 +1,10 @@
 package tourGuide.service;
 
+import tourGuide.DTO.UserPreferencesDTO;
 import tourGuide.domain.User;
+import tourGuide.domain.UserPreferences;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -16,5 +19,9 @@ public interface UserService {
     public List<User> getAllUsers();
 
     public void addUser(User user);
+
+    public void setUserPreferences(User user, UserPreferencesDTO userPreferencesDTO);
+
+    public UserPreferencesDTO getUserPreferences(User user);
 
 }

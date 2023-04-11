@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TourGuideServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">TourGuide</a> &gt; <a href="index.source.html" class="el_package">tourGuide.service</a> &gt; <span class="el_source">TourGuideServiceImpl.java</span></div><h1>TourGuideServiceImpl.java</h1><pre class="source lang-java linenums">package tourGuide.service;
+
+import com.google.common.collect.ComparisonChain;
+import gpsUtil.location.Attraction;
+import gpsUtil.location.Location;
+import gpsUtil.location.VisitedLocation;
+import org.javamoney.moneta.Money;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.w3c.dom.Attr;
+import tourGuide.DTO.TouristAttractionDetailsDTO;
+import tourGuide.DTO.UserPreferencesDTO;
+import tourGuide.domain.User;
+import tourGuide.domain.UserPreferences;
+
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+@Service
+<span class="nc" id="L22">public class TourGuideServiceImpl implements TourGuideService {</span>
+
+    // TODO private Logger logger = LoggerFactory.getLogger(TourGuideServiceImpl.class);
+
+    @Autowired
+    private GpsUtilService gpsUtilService;
+    @Autowired
+    private RewardsService rewardsService;
+
+    @Override
+    public List&lt;TouristAttractionDetailsDTO&gt; getNearbyAttractions(User user) {
+        // on recupere toutes les attractions et on calcule leurs distance avec l utilisateur
+<span class="nc" id="L34">        NavigableMap&lt;Double, Attraction&gt; nearbyAttractions = new TreeMap&lt;&gt;() ;</span>
+<span class="nc" id="L35">        Location userLocation = trackUserLocation(user).location;//getLastVisitedLocation(user).location;</span>
+
+<span class="nc bnc" id="L37" title="All 2 branches missed.">        for (Attraction attraction : gpsUtilService.getAttractions()) {</span>
+<span class="nc" id="L38">            Location attractionLocation = new Location(attraction.latitude, attraction.longitude);</span>
+<span class="nc" id="L39">            nearbyAttractions.put(rewardsService.getDistance(userLocation, attractionLocation), attraction);</span>
+<span class="nc" id="L40">        }</span>
+        //on recupere les 5 plus procheset on crÃ©Ã© un DTO pour chacun
+<span class="nc" id="L42">        List&lt;TouristAttractionDetailsDTO&gt; touristAttractionsDetailsList = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">        for(int i = 0; i &gt; 5; i++) {</span>
+<span class="nc" id="L44">            TouristAttractionDetailsDTO touristAttractionDetails = new TouristAttractionDetailsDTO();</span>
+<span class="nc" id="L45">            Map.Entry&lt;Double, Attraction&gt; attraction = nearbyAttractions.pollFirstEntry();</span>
+
+<span class="nc" id="L47">            touristAttractionDetails.setName(attraction.getValue().attractionName);</span>
+<span class="nc" id="L48">            Location attractionLocation = new Location(attraction.getValue().latitude, attraction.getValue().longitude);</span>
+<span class="nc" id="L49">            touristAttractionDetails.setTouristAttractionLocation(attractionLocation);</span>
+<span class="nc" id="L50">            touristAttractionDetails.setUserLocation(userLocation);</span>
+<span class="nc" id="L51">            touristAttractionDetails.setDistance(attraction.getKey());</span>
+<span class="nc" id="L52">            touristAttractionDetails.setRewardPoints(rewardsService.getRewardPoints(attraction.getValue(), user));</span>
+
+<span class="nc" id="L54">            touristAttractionsDetailsList.add(touristAttractionDetails);</span>
+        }
+
+        //on return
+<span class="nc" id="L58">        return touristAttractionsDetailsList;</span>
+
+        /*
+       //1 crÃ©ation DTOs simplifiÃ©
+        Location userLocation = trackUserLocation(user).location;
+        Stream&lt;TouristAttractionDetailsDTO&gt; nearbyAttraction = gpsUtilService.getAttractions().stream().map(attraction -&gt; {
+            TouristAttractionDetailsDTO dto = new TouristAttractionDetailsDTO();
+            return dto;
+        });
+
+        // 2 on tri par distance avec le plus prÃ¨s au dÃ©but
+        Stream&lt;TouristAttractionDetailsDTO&gt; orderedAttractions = nearbyAttraction.sorted(Comparator.comparing(TouristAttractionDetailsDTO::rewardsService.getDistance(userLocation, attractionLocation));
+
+        //3 on prend les 5 premiers
+        List&lt;TouristAttractionDetailsDTO&gt; attractionDistance2 = orderedAttractions.limit(5).collect(Collectors.toList());
+
+        //On calcule les rewards sur les 5 uniquements
+        for(TouristAttractionDetailsDTO toto : attractionDistance2) {
+            toto.setRewardPoints(rewardsService.getRewardPoints(//j'ai besoin de l attraction ici, user));
+        }
+
+        //On retourne la liste
+        return attractionDistance2;*/
+    }
+
+    @Override
+    public VisitedLocation trackUserLocation(User user) {
+<span class="nc" id="L85">        VisitedLocation visitedLocation = gpsUtilService.getUserLocation(user.getUserId());</span>
+<span class="nc" id="L86">        user.addToVisitedLocations(visitedLocation);</span>
+<span class="nc" id="L87">        rewardsService.calculateRewards(user);</span>
+<span class="nc" id="L88">        return visitedLocation;</span>
+    }
+
+    @Override
+    public VisitedLocation getLastVisitedLocation(User user) {
+<span class="nc bnc" id="L93" title="All 2 branches missed.">        VisitedLocation visitedLocation = (user.getVisitedLocations().size() &gt; 0) ? user.getLastVisitedLocation()</span>
+<span class="nc" id="L94">                : trackUserLocation(user);</span>
+<span class="nc" id="L95">        return visitedLocation;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.4.201905082037</span></div></body></html>

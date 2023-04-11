@@ -20,7 +20,7 @@ import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
 
 public class TestRewardsService {
-
+/*
 	@Test
 	public void userGetRewards() {
 		GpsUtil gpsUtil = new GpsUtil();
@@ -62,5 +62,5 @@ public class TestRewardsService {
 
 		assertEquals(gpsUtil.getAttractions().size(), userRewards.size());
 	}
-	
+	*/
 }

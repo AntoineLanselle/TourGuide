@@ -1,24 +1,22 @@
 package tourGuide.controllers;
 
-import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import tourGuide.DTO.TouristAttractionDetailsDTO;
+import tourGuide.DTO.UserPreferencesDTO;
 import tourGuide.domain.User;
 import tourGuide.domain.UserReward;
-import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
 import tourGuide.service.TripPricerService;
 import tourGuide.service.UserService;
 import tripPricer.Provider;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +24,7 @@ import java.util.Map;
 @RestController
 public class TourGuideController {
 
-    //TODO private Logger logger = LoggerFactory.getLogger(TourGuideController.class);
+    private Logger logger = LoggerFactory.getLogger(TourGuideController.class);
 
     @Autowired
     private UserService userService;
@@ -34,21 +32,19 @@ public class TourGuideController {
     private TourGuideService tourGuideService;
     @Autowired
     private TripPricerService tripPricerService;
-    @Autowired
-    private RewardsService rewardsService;
 
-    @RequestMapping("/")
+    @GetMapping("/")
     public String index() {
         return "Greetings from TourGuide!";
     }
 
-    @RequestMapping("/getLocation")
+    @GetMapping("/getLocation")
     public ResponseEntity<Location> getLocation(@RequestParam String userName) {
         VisitedLocation visitedLocation = tourGuideService.getLastVisitedLocation(userService.getUser(userName));
         return ResponseEntity.status(HttpStatus.OK).body(visitedLocation.location);
     }
 
-    // TODO: Change this method to no longer return a List of Attractions.
+    // Done: Change this method to no longer return a List of Attractions.
     // Instead: Get the closest five tourist attractions to the user - no matter how
     // far away they are.
     // Return a new JSON object that contains:
@@ -59,20 +55,20 @@ public class TourGuideController {
     // attractions.
     // The reward points for visiting each Attraction.
     // Note: Attraction reward points can be gathered from RewardsCentral
-    @RequestMapping("/getNearbyAttractions")
+    @GetMapping("/getNearbyAttractions")
     public ResponseEntity<List<TouristAttractionDetailsDTO>> getNearbyAttractions(@RequestParam String userName) {
         User user = userService.getUser(userName);
-        List<TouristAttractionDetailsDTO> closestAttractions = tourGuideService.getFiveClosestAttractions(user);
-        return ResponseEntity.status(HttpStatus.OK).body(closestAttractions);
+        List<TouristAttractionDetailsDTO> NearbyAttractions = tourGuideService.getNearbyAttractions(user);
+        return ResponseEntity.status(HttpStatus.OK).body(NearbyAttractions);
     }
 
-    @RequestMapping("/getRewards")
+    @GetMapping("/getRewards")
     public ResponseEntity<List<UserReward>> getRewards(@RequestParam String userName) {
         User user = userService.getUser(userName);
         return ResponseEntity.status(HttpStatus.OK).body(user.getUserRewards());
     }
 
-    // TODO: Get a list of every user's most recent location as JSON
+    // Done: Get a list of every user's most recent location as JSON
     // - Note: does not use gpsUtil to query for their current location,
     // but rather gathers the user's current location from their stored location
     // history.
@@ -84,13 +80,13 @@ public class TourGuideController {
     // {"longitude":-48.188821,"latitude":74.84371}
     // ...
     // }
-    @RequestMapping("/getAllCurrentLocations")
+    @GetMapping("/getAllCurrentLocations")
+    //Decaler dans le service TourGuide ?
     public ResponseEntity<Map<String, Object>> getAllCurrentLocations() {
         List<User> allUsers = userService.getAllUsers();
         Map<String, Object> currentLocations = new HashMap<String, Object>();
         for (User user : allUsers) {
             Map<String, Double> userCoord = new HashMap<String, Double>();
-            // pas d'accord avec Clément cf note du TODO.
             VisitedLocation userLocation = tourGuideService.getLastVisitedLocation(user);
             userCoord.put("longitude", userLocation.location.longitude);
             userCoord.put("latitude", userLocation.location.latitude);
@@ -99,10 +95,22 @@ public class TourGuideController {
         return ResponseEntity.status(HttpStatus.OK).body(currentLocations);
     }
 
-    @RequestMapping("/getTripDeals")
+    @GetMapping("/getTripDeals")
     public ResponseEntity<List<Provider>> getTripDeals(@RequestParam String userName) {
         List<Provider> providers = tripPricerService.getTripDeals(userService.getUser(userName));
         return ResponseEntity.status(HttpStatus.OK).body(providers);
+    }
+
+    @PutMapping("/setUserPreferences")
+    //ajouter String currency dans le DTO ?
+    public ResponseEntity setUserPreferences(@RequestParam String userName, @RequestBody UserPreferencesDTO userPreferencesDTO) {
+        userService.setUserPreferences(userService.getUser(userName), userPreferencesDTO);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @GetMapping("/getUserPreferences")
+    public ResponseEntity<UserPreferencesDTO> getUserPreferences(@RequestParam String userName) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getUserPreferences(userService.getUser(userName)));
     }
 
 }

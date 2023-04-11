@@ -1,6 +1,5 @@
 package tourGuide.service;
 
-import com.google.common.collect.ComparisonChain;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
@@ -10,7 +9,6 @@ import tourGuide.DTO.TouristAttractionDetailsDTO;
 import tourGuide.domain.User;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class TourGuideServiceImpl implements TourGuideService {
@@ -23,35 +21,26 @@ public class TourGuideServiceImpl implements TourGuideService {
     private RewardsService rewardsService;
 
     @Override
-    public List<TouristAttractionDetailsDTO> getFiveClosestAttractions(User user) {
-        List<TouristAttractionDetailsDTO> attractionDistance = new ArrayList<>();
-        Location userLocation = getLastVisitedLocation(user).location;
+    public List<TouristAttractionDetailsDTO> getNearbyAttractions(User user) {
+        List<TouristAttractionDetailsDTO> touristAttractionsDetailsList = new ArrayList<>();
+        NavigableMap<Double, Attraction> nearbyAttractions = new TreeMap<>() ;
+        Location userLocation = trackUserLocation(user).location;
+
+        // on recupere toutes les attractions et on calcule leurs distance avec l utilisateur
         for (Attraction attraction : gpsUtilService.getAttractions()) {
             Location attractionLocation = new Location(attraction.latitude, attraction.longitude);
-            TouristAttractionDetailsDTO attractionDetailsDTO = new TouristAttractionDetailsDTO(
-                    attraction.attractionName,
-                    attractionLocation,
-                    userLocation,
-                    rewardsService.getDistance(userLocation, attractionLocation),
-                    rewardsService.getRewardPoints(attraction, user));
-            attractionDistance.add(attractionDetailsDTO);
+            nearbyAttractions.put(rewardsService.getDistance(userLocation, attractionLocation), attraction);
         }
-
-        Collections.sort(attractionDistance, (a1, a2) -> ComparisonChain.start()
-                .compare(a2.getDistance(), a1.getDistance()).result());
-        return attractionDistance.subList(0, 5);
-    }
-
-    @Override
-    public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
-        List<Attraction> nearbyAttractions = new ArrayList<>();
-        for (Attraction attraction : gpsUtilService.getAttractions()) {
-            if (rewardsService.isWithinAttractionProximity(attraction, visitedLocation.location)) {
-                nearbyAttractions.add(attraction);
-            }
+        //on recupere les 5 plus proches et on créé un DTO pour chacun
+        for(int i = 0; i < 5; i++) {
+            Map.Entry<Double, Attraction> attractionMap = nearbyAttractions.pollFirstEntry();
+            Attraction attraction = attractionMap.getValue();
+            Location attractionLocation = new Location(attraction.latitude, attraction.longitude);
+            int rewardPoints = rewardsService.getRewardPoints(attraction, user);
+            TouristAttractionDetailsDTO touristAttractionDetails = new TouristAttractionDetailsDTO(attraction.attractionName, attractionLocation, userLocation, attractionMap.getKey(), rewardPoints);
+            touristAttractionsDetailsList.add(touristAttractionDetails);
         }
-
-        return nearbyAttractions;
+        return touristAttractionsDetailsList;
     }
 
     @Override
