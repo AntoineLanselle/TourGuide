@@ -4,6 +4,8 @@ import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import tourGuide.domain.User;
 
+import java.util.concurrent.CompletableFuture;
+
 public interface RewardsService {
 
     public void setProximityBuffer(int proximityBuffer);

@@ -4,12 +4,14 @@ import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import tourGuide.domain.User;
 import tourGuide.domain.UserReward;
 import tourGuide.repositories.RewardCentralRepository;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class RewardsServiceImpl implements RewardsService {
@@ -42,18 +44,18 @@ public class RewardsServiceImpl implements RewardsService {
         List<VisitedLocation> userLocations = user.getVisitedLocations();
         List<Attraction> attractions = gpsUtil.getAttractions();
 
+        // pour chaque localisation de l utilisateur on regarde si chaque attractions etait proche ou non
         for (VisitedLocation visitedLocation : userLocations) {
             for (Attraction attraction : attractions) {
-                if (user.getUserRewards().stream()
-                        .filter(r -> r.attraction.attractionName.equals(attraction.attractionName)).count() == 0) {
-                    if (nearAttraction(visitedLocation, attraction)) {
-                        user.addUserReward(
-                                new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
-                    }
+                // on regarde si la localisation est proche de l attraction
+                if (nearAttraction(visitedLocation, attraction)) {
+                    user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
                 }
             }
         }
     }
+
+
 
     @Override
     public boolean isWithinAttractionProximity(Attraction attraction, Location location) {

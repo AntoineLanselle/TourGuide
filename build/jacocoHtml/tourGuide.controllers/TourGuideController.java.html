@@ -11,22 +11,21 @@ import org.springframework.web.bind.annotation.*;
 import tourGuide.DTO.TouristAttractionDetailsDTO;
 import tourGuide.DTO.UserPreferencesDTO;
 import tourGuide.domain.User;
-import tourGuide.domain.UserPreferences;
 import tourGuide.domain.UserReward;
 import tourGuide.service.TourGuideService;
 import tourGuide.service.TripPricerService;
 import tourGuide.service.UserService;
 import tripPricer.Provider;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 @RestController
-<span class="nc" id="L27">public class TourGuideController {</span>
+<span class="fc" id="L26">public class TourGuideController {</span>
 
-<span class="nc" id="L29">    private Logger logger = LoggerFactory.getLogger(TourGuideController.class);</span>
+<span class="fc" id="L28">    private Logger logger = LoggerFactory.getLogger(TourGuideController.class);</span>
 
     @Autowired
     private UserService userService;
@@ -37,13 +36,13 @@ import java.util.Map;
 
     @GetMapping(&quot;/&quot;)
     public String index() {
-<span class="nc" id="L40">        return &quot;Greetings from TourGuide!&quot;;</span>
+<span class="nc" id="L39">        return &quot;Greetings from TourGuide!&quot;;</span>
     }
 
     @GetMapping(&quot;/getLocation&quot;)
-    public ResponseEntity&lt;Location&gt; getLocation(@RequestParam String userName) {
-<span class="nc" id="L45">        VisitedLocation visitedLocation = tourGuideService.getLastVisitedLocation(userService.getUser(userName));</span>
-<span class="nc" id="L46">        return ResponseEntity.status(HttpStatus.OK).body(visitedLocation.location);</span>
+    public ResponseEntity&lt;Location&gt; getLocation(@RequestParam String userName) throws ExecutionException, InterruptedException {
+<span class="nc" id="L44">        VisitedLocation visitedLocation = tourGuideService.getLastVisitedLocation(userService.getUser(userName));</span>
+<span class="nc" id="L45">        return ResponseEntity.status(HttpStatus.OK).body(visitedLocation.location);</span>
     }
 
     // Done: Change this method to no longer return a List of Attractions.
@@ -58,16 +57,16 @@ import java.util.Map;
     // The reward points for visiting each Attraction.
     // Note: Attraction reward points can be gathered from RewardsCentral
     @GetMapping(&quot;/getNearbyAttractions&quot;)
-    public ResponseEntity&lt;List&lt;TouristAttractionDetailsDTO&gt;&gt; getNearbyAttractions(@RequestParam String userName) {
-<span class="nc" id="L62">        User user = userService.getUser(userName);</span>
-<span class="nc" id="L63">        List&lt;TouristAttractionDetailsDTO&gt; NearbyAttractions = tourGuideService.getNearbyAttractions(user);</span>
-<span class="nc" id="L64">        return ResponseEntity.status(HttpStatus.OK).body(NearbyAttractions);</span>
+    public ResponseEntity&lt;List&lt;TouristAttractionDetailsDTO&gt;&gt; getNearbyAttractions(@RequestParam String userName) throws ExecutionException, InterruptedException {
+<span class="nc" id="L61">        User user = userService.getUser(userName);</span>
+<span class="nc" id="L62">        List&lt;TouristAttractionDetailsDTO&gt; NearbyAttractions = tourGuideService.getNearbyAttractions(user);</span>
+<span class="nc" id="L63">        return ResponseEntity.status(HttpStatus.OK).body(NearbyAttractions);</span>
     }
 
     @GetMapping(&quot;/getRewards&quot;)
     public ResponseEntity&lt;List&lt;UserReward&gt;&gt; getRewards(@RequestParam String userName) {
-<span class="nc" id="L69">        User user = userService.getUser(userName);</span>
-<span class="nc" id="L70">        return ResponseEntity.status(HttpStatus.OK).body(user.getUserRewards());</span>
+<span class="nc" id="L68">        User user = userService.getUser(userName);</span>
+<span class="nc" id="L69">        return ResponseEntity.status(HttpStatus.OK).body(user.getUserRewards());</span>
     }
 
     // Done: Get a list of every user's most recent location as JSON
@@ -84,35 +83,35 @@ import java.util.Map;
     // }
     @GetMapping(&quot;/getAllCurrentLocations&quot;)
     //Decaler dans le service TourGuide ?
-    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; getAllCurrentLocations() {
-<span class="nc" id="L88">        List&lt;User&gt; allUsers = userService.getAllUsers();</span>
-<span class="nc" id="L89">        Map&lt;String, Object&gt; currentLocations = new HashMap&lt;String, Object&gt;();</span>
-<span class="nc bnc" id="L90" title="All 2 branches missed.">        for (User user : allUsers) {</span>
-<span class="nc" id="L91">            Map&lt;String, Double&gt; userCoord = new HashMap&lt;String, Double&gt;();</span>
-<span class="nc" id="L92">            VisitedLocation userLocation = tourGuideService.getLastVisitedLocation(user);</span>
-<span class="nc" id="L93">            userCoord.put(&quot;longitude&quot;, userLocation.location.longitude);</span>
-<span class="nc" id="L94">            userCoord.put(&quot;latitude&quot;, userLocation.location.latitude);</span>
-<span class="nc" id="L95">            currentLocations.put(user.getUserId().toString(), userCoord);</span>
-<span class="nc" id="L96">        }</span>
-<span class="nc" id="L97">        return ResponseEntity.status(HttpStatus.OK).body(currentLocations);</span>
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; getAllCurrentLocations() throws ExecutionException, InterruptedException {
+<span class="nc" id="L87">        List&lt;User&gt; allUsers = userService.getAllUsers();</span>
+<span class="nc" id="L88">        Map&lt;String, Object&gt; currentLocations = new HashMap&lt;String, Object&gt;();</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">        for (User user : allUsers) {</span>
+<span class="nc" id="L90">            Map&lt;String, Double&gt; userCoord = new HashMap&lt;String, Double&gt;();</span>
+<span class="nc" id="L91">            VisitedLocation userLocation = tourGuideService.getLastVisitedLocation(user);</span>
+<span class="nc" id="L92">            userCoord.put(&quot;longitude&quot;, userLocation.location.longitude);</span>
+<span class="nc" id="L93">            userCoord.put(&quot;latitude&quot;, userLocation.location.latitude);</span>
+<span class="nc" id="L94">            currentLocations.put(user.getUserId().toString(), userCoord);</span>
+<span class="nc" id="L95">        }</span>
+<span class="nc" id="L96">        return ResponseEntity.status(HttpStatus.OK).body(currentLocations);</span>
     }
 
     @GetMapping(&quot;/getTripDeals&quot;)
     public ResponseEntity&lt;List&lt;Provider&gt;&gt; getTripDeals(@RequestParam String userName) {
-<span class="nc" id="L102">        List&lt;Provider&gt; providers = tripPricerService.getTripDeals(userService.getUser(userName));</span>
-<span class="nc" id="L103">        return ResponseEntity.status(HttpStatus.OK).body(providers);</span>
+<span class="nc" id="L101">        List&lt;Provider&gt; providers = tripPricerService.getTripDeals(userService.getUser(userName));</span>
+<span class="nc" id="L102">        return ResponseEntity.status(HttpStatus.OK).body(providers);</span>
     }
 
     @PutMapping(&quot;/setUserPreferences&quot;)
     //ajouter String currency dans le DTO ?
     public ResponseEntity setUserPreferences(@RequestParam String userName, @RequestBody UserPreferencesDTO userPreferencesDTO) {
-<span class="nc" id="L109">        userService.setUserPreferences(userService.getUser(userName), userPreferencesDTO);</span>
-<span class="nc" id="L110">        return ResponseEntity.status(HttpStatus.OK).build();</span>
+<span class="nc" id="L108">        userService.setUserPreferences(userService.getUser(userName), userPreferencesDTO);</span>
+<span class="nc" id="L109">        return ResponseEntity.status(HttpStatus.OK).build();</span>
     }
 
     @GetMapping(&quot;/getUserPreferences&quot;)
     public ResponseEntity&lt;UserPreferencesDTO&gt; getUserPreferences(@RequestParam String userName) {
-<span class="nc" id="L115">        return ResponseEntity.status(HttpStatus.OK).body(userService.getUserPreferences(userService.getUser(userName)));</span>
+<span class="nc" id="L114">        return ResponseEntity.status(HttpStatus.OK).body(userService.getUserPreferences(userService.getUser(userName)));</span>
     }
 
 }

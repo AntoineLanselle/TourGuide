@@ -15,7 +15,7 @@ import java.util.stream.IntStream;
 public class InternalTestHelper {
 
     // Set this default up to 100,000 for testing
-    private static final int internalUserNumber = 100;
+    private static final int internalUserNumber = 100000;
 
     public void initializeInternalUsers(Map<String, User> internalUserMap) {
         IntStream.range(0, internalUserNumber).forEach(i -> {

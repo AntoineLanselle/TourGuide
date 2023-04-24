@@ -1,25 +1,6 @@
-package tourGuide;
+package tourGuide.service;
 
-import static org.junit.Assert.*;
-
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
-import org.junit.Ignore;
-import org.junit.Test;
-
-import gpsUtil.GpsUtil;
-import gpsUtil.location.Attraction;
-import gpsUtil.location.VisitedLocation;
-import rewardCentral.RewardCentral;
-import tourGuide.domain.User;
-import tourGuide.domain.UserReward;
-import tourGuide.helper.InternalTestHelper;
-import tourGuide.service.RewardsService;
-import tourGuide.service.TourGuideService;
-
-public class TestRewardsService {
+public class RewardsServiceTest {
 /*
 	@Test
 	public void userGetRewards() {

@@ -9,13 +9,15 @@ import tourGuide.domain.User;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public interface TourGuideService {
 
-    public List<TouristAttractionDetailsDTO> getNearbyAttractions(User user);
+    public List<TouristAttractionDetailsDTO> getNearbyAttractions(User user) throws ExecutionException, InterruptedException;
 
-    public VisitedLocation trackUserLocation(User user);
+    public CompletableFuture<VisitedLocation> trackUserLocation(User user);
 
-    public VisitedLocation getLastVisitedLocation(User user);
+    public VisitedLocation getLastVisitedLocation(User user) throws ExecutionException, InterruptedException;
 
 }

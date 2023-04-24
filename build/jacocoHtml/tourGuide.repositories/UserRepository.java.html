@@ -13,14 +13,14 @@ public class UserRepository {
 
     private final Map&lt;String, User&gt; usersList;
 
-<span class="nc" id="L16">    public UserRepository() {</span>
-<span class="nc" id="L17">        usersList = new HashMap&lt;&gt;();</span>
-<span class="nc" id="L18">        InternalTestHelper testHelper = new InternalTestHelper();</span>
-<span class="nc" id="L19">        testHelper.initializeInternalUsers(this.usersList);</span>
-<span class="nc" id="L20">    }</span>
+<span class="fc" id="L16">    public UserRepository() {</span>
+<span class="fc" id="L17">        usersList = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L18">        InternalTestHelper testHelper = new InternalTestHelper();</span>
+<span class="fc" id="L19">        testHelper.initializeInternalUsers(this.usersList);</span>
+<span class="fc" id="L20">    }</span>
 
     public Map&lt;String, User&gt; getUsersList() {
-<span class="nc" id="L23">        return this.usersList;</span>
+<span class="fc" id="L23">        return this.usersList;</span>
     }
 
 }

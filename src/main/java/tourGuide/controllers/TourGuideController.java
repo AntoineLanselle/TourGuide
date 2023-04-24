@@ -20,6 +20,7 @@ import tripPricer.Provider;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 public class TourGuideController {
@@ -39,7 +40,7 @@ public class TourGuideController {
     }
 
     @GetMapping("/getLocation")
-    public ResponseEntity<Location> getLocation(@RequestParam String userName) {
+    public ResponseEntity<Location> getLocation(@RequestParam String userName) throws ExecutionException, InterruptedException {
         VisitedLocation visitedLocation = tourGuideService.getLastVisitedLocation(userService.getUser(userName));
         return ResponseEntity.status(HttpStatus.OK).body(visitedLocation.location);
     }
@@ -56,7 +57,7 @@ public class TourGuideController {
     // The reward points for visiting each Attraction.
     // Note: Attraction reward points can be gathered from RewardsCentral
     @GetMapping("/getNearbyAttractions")
-    public ResponseEntity<List<TouristAttractionDetailsDTO>> getNearbyAttractions(@RequestParam String userName) {
+    public ResponseEntity<List<TouristAttractionDetailsDTO>> getNearbyAttractions(@RequestParam String userName) throws ExecutionException, InterruptedException {
         User user = userService.getUser(userName);
         List<TouristAttractionDetailsDTO> NearbyAttractions = tourGuideService.getNearbyAttractions(user);
         return ResponseEntity.status(HttpStatus.OK).body(NearbyAttractions);
@@ -82,7 +83,7 @@ public class TourGuideController {
     // }
     @GetMapping("/getAllCurrentLocations")
     //Decaler dans le service TourGuide ?
-    public ResponseEntity<Map<String, Object>> getAllCurrentLocations() {
+    public ResponseEntity<Map<String, Object>> getAllCurrentLocations() throws ExecutionException, InterruptedException {
         List<User> allUsers = userService.getAllUsers();
         Map<String, Object> currentLocations = new HashMap<String, Object>();
         for (User user : allUsers) {

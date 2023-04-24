@@ -4,14 +4,17 @@ import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import tourGuide.DTO.TouristAttractionDetailsDTO;
 import tourGuide.domain.User;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Service
-public class TourGuideServiceImpl implements TourGuideService {
+public class TourGuideServiceImpl extends Thread implements TourGuideService  {
 
     // TODO private Logger logger = LoggerFactory.getLogger(TourGuideServiceImpl.class);
 
@@ -21,10 +24,10 @@ public class TourGuideServiceImpl implements TourGuideService {
     private RewardsService rewardsService;
 
     @Override
-    public List<TouristAttractionDetailsDTO> getNearbyAttractions(User user) {
+    public List<TouristAttractionDetailsDTO> getNearbyAttractions(User user) throws ExecutionException, InterruptedException {
         List<TouristAttractionDetailsDTO> touristAttractionsDetailsList = new ArrayList<>();
         NavigableMap<Double, Attraction> nearbyAttractions = new TreeMap<>() ;
-        Location userLocation = trackUserLocation(user).location;
+        Location userLocation = trackUserLocation(user).get().location;
 
         // on recupere toutes les attractions et on calcule leurs distance avec l utilisateur
         for (Attraction attraction : gpsUtilService.getAttractions()) {
@@ -44,17 +47,18 @@ public class TourGuideServiceImpl implements TourGuideService {
     }
 
     @Override
-    public VisitedLocation trackUserLocation(User user) {
+    @Async
+    public CompletableFuture<VisitedLocation> trackUserLocation(User user) {
         VisitedLocation visitedLocation = gpsUtilService.getUserLocation(user.getUserId());
         user.addToVisitedLocations(visitedLocation);
         rewardsService.calculateRewards(user);
-        return visitedLocation;
+        return CompletableFuture.completedFuture(visitedLocation);
     }
 
     @Override
-    public VisitedLocation getLastVisitedLocation(User user) {
+    public VisitedLocation getLastVisitedLocation(User user) throws ExecutionException, InterruptedException {
         VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ? user.getLastVisitedLocation()
-                : trackUserLocation(user);
+                : trackUserLocation(user).get();
         return visitedLocation;
     }
 

@@ -11,20 +11,20 @@ import java.util.Locale;
 import java.util.UUID;
 
 @Service
-<span class="nc" id="L14">public class GpsUtilServiceImpl implements GpsUtilService {</span>
+<span class="fc" id="L14">public class GpsUtilServiceImpl implements GpsUtilService {</span>
 
     @Autowired
     private GpsUtilRepository gpsUtil;
 
     @Override
     public List&lt;Attraction&gt; getAttractions() {
-<span class="nc" id="L21">        return gpsUtil.getAttractions();</span>
+<span class="fc" id="L21">        return gpsUtil.getAttractions();</span>
     }
 
     @Override
     public VisitedLocation getUserLocation(UUID userId) {
-<span class="nc" id="L26">        Locale.setDefault(Locale.ENGLISH);</span>
-<span class="nc" id="L27">        return gpsUtil.getUserLocation(userId);</span>
+<span class="fc" id="L26">        Locale.setDefault(Locale.ENGLISH);</span>
+<span class="fc" id="L27">        return gpsUtil.getUserLocation(userId);</span>
     }
 
 }

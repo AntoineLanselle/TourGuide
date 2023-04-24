@@ -1,6 +1,7 @@
 package tourGuide.domain;
 
 import gpsUtil.location.VisitedLocation;
+import org.springframework.scheduling.annotation.Async;
 import tripPricer.Provider;
 
 import java.util.ArrayList;
@@ -104,9 +105,9 @@ public class User {
     }
 
     public void addUserReward(UserReward userReward) {
-        if (userRewards.stream().filter(r -> !r.attraction.attractionName.equals(userReward.attraction)).count() == 0) {
+       if (userRewards.stream().filter(r -> r.attraction.equals(userReward.attraction)).count() == 0) {
             userRewards.add(userReward);
-        }
+       }
     }
 
 }
