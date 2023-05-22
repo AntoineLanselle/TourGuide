@@ -3,6 +3,8 @@ package tourGuide.service;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -10,24 +12,31 @@ import tourGuide.domain.User;
 import tourGuide.domain.UserReward;
 import tourGuide.repositories.RewardCentralRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 public class RewardsServiceImpl implements RewardsService {
 
-    // TODO private Logger logger = LoggerFactory.getLogger(RewardsServiceImpl.class);
+    private Logger logger = LoggerFactory.getLogger(RewardsServiceImpl.class);
 
     @Autowired
     private RewardCentralRepository rewardsCentral;
     @Autowired
     private GpsUtilService gpsUtil;
 
+    @Autowired
+    private UserService userService;
+
     private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
     // proximity in miles
     private int defaultProximityBuffer = 10;
     private int proximityBuffer = defaultProximityBuffer;
     private int attractionProximityRange = 200;
+    private final ExecutorService executorService = Executors.newFixedThreadPool(1000);
 
     @Override
     public void setProximityBuffer(int proximityBuffer) {
@@ -40,22 +49,55 @@ public class RewardsServiceImpl implements RewardsService {
     }
 
     @Override
-    public void calculateRewards(User user) {
+    public CompletableFuture<Void> calculateRewards(User user) {
+        logger.atInfo().log("Calculating rewards of user " + user.getUserId());
         List<VisitedLocation> userLocations = user.getVisitedLocations();
         List<Attraction> attractions = gpsUtil.getAttractions();
 
+        //List<CompletableFuture> tasksFutures = new ArrayList<>();
         // pour chaque localisation de l utilisateur on regarde si chaque attractions etait proche ou non
-        for (VisitedLocation visitedLocation : userLocations) {
+ /*       for (VisitedLocation visitedLocation : userLocations) {
             for (Attraction attraction : attractions) {
                 // on regarde si la localisation est proche de l attraction
                 if (nearAttraction(visitedLocation, attraction)) {
-                    user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
+                    logger.atInfo().log("Visited location found for user " + user.getUserId() + ", " + attraction.attractionName);
+                    tasksFutures.add(
+                            CompletableFuture.runAsync(()-> {
+                                user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
+                            }
+                           , executorService));
                 }
             }
         }
+        CompletableFuture allFutures = CompletableFuture.allOf(tasksFutures.toArray(new CompletableFuture[0]));
+        allFutures.join();
+    }
+*/
+        return CompletableFuture.runAsync(() -> {
+            for (VisitedLocation visitedLocation : userLocations) {
+                attractions.stream().filter(attraction -> nearAttraction(visitedLocation, attraction))
+                        .forEach(attraction ->
+                                user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)))
+                        );
+            }
+        }, executorService);
     }
 
+    //TODO faire appelle à cette methode pour le test de performance
+    public List<UserReward> calculateAllRewards() {
+        List<Attraction> attractions = gpsUtil.getAttractions();
+        List<UserReward> result = new ArrayList<>();
 
+        List<CompletableFuture<UserReward>> allUsersRewardsFutures =
+                userService.getAllUsers().stream().map(
+                        user -> CompletableFuture.supplyAsync( () -> {
+                            UserReward userReward = new UserReward();
+                            userReward.setRewardPoints();
+                        })
+                );
+
+        return result;
+    }
 
     @Override
     public boolean isWithinAttractionProximity(Attraction attraction, Location location) {

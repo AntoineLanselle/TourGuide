@@ -53,6 +53,11 @@ public class TourGuideServiceImpl extends Thread implements TourGuideService  {
         user.addToVisitedLocations(visitedLocation);
         rewardsService.calculateRewards(user);
         return CompletableFuture.completedFuture(visitedLocation);
+        /*return gpsUtilService.getUserLocation(user.getUserId()).thenApply(visitLocation -> {
+            user.addToVisitedLocations(visitLocation);
+            rewardsService.calculateRewards((user));
+            return CompletableFuture.completedFuture(visitLocation).join();
+        })*/
     }
 
     @Override

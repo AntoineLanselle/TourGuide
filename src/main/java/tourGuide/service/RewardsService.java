@@ -12,7 +12,7 @@ public interface RewardsService {
 
     public void setDefaultProximityBuffer();
 
-    public void calculateRewards(User user);
+    public CompletableFuture<Void> calculateRewards(User user);
 
     public boolean isWithinAttractionProximity(Attraction attraction, Location location);
 

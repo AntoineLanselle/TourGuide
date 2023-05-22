@@ -1,23 +1,24 @@
 package tourGuide;
 
-import static org.junit.Assert.assertTrue;
-
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.time.StopWatch;
-import org.junit.Ignore;
 
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import tourGuide.domain.User;
 import tourGuide.service.*;
+
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class PerformanceTest {
@@ -28,8 +29,7 @@ public class PerformanceTest {
 	 *     The number of users generated for the high volume tests can be easily adjusted via this method:
 	 *     
 	 *     		InternalTestHelper.setInternalUserNumber(100000);
-	 *     
-	 *     
+	 *
 	 *     These tests can be modified to suit new solutions, just as long as the performance metrics
 	 *     at the end of the tests remains consistent. 
 	 * 
@@ -51,48 +51,43 @@ public class PerformanceTest {
 	@Autowired
 	private RewardsService rewardsService;
 
-
 	@Test
 	public void highVolumeTrackLocation() {
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes
 		StopWatch stopWatch = new StopWatch();
-		stopWatch.start();
-
 		List<User> allUsers = userService.getAllUsers();
-		//int i = 0;
 
-		for(User user : allUsers) {
-			tourGuideService.trackUserLocation(user);
-			//System.out.println("Utilisateur numéro " + i);
-			//i++;
-		}
-
+		stopWatch.start();
+		allUsers.forEach(user -> tourGuideService.trackUserLocation(user));
 		stopWatch.stop();
 
-		System.out.println("highVolumeTrackLocation: Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds."); 
+		System.out.println("highVolumeTrackLocation: Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
 		assertTrue(TimeUnit.MINUTES.toSeconds(15) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
 	}
 
 	@Test
-	public void highVolumeGetRewards() throws InterruptedException {
+	public void highVolumeGetRewards() {
 		// Users should be incremented up to 100,000, and test finishes within 20 minutes
 		StopWatch stopWatch = new StopWatch();
-		stopWatch.start();
-		
-	    Attraction attraction = gpsUtilService.getAttractions().get(0);
 		List<User> allUsers = userService.getAllUsers();
+		Attraction attraction = gpsUtilService.getAttractions().get(0);
 
-		allUsers.forEach(user -> user.addToVisitedLocations(new VisitedLocation(user.getUserId(), attraction, new Date())));
-	    allUsers.forEach(user -> rewardsService.calculateRewards(user));
-		int i=0;
+		//@Async List<CompletableFuture<Void>> tasksFutures = new ArrayList<>();
 		for(User user : allUsers) {
-			i++;
-			System.out.println("\n" + i + " user:" + user.getUserName() + "\nrewards:" + user.getUserRewards() + "\n");
-			//assertTrue(user.getUserRewards().size() > 0);
+			user.addToVisitedLocations(new VisitedLocation(user.getUserId(), attraction, new Date()));
+			//@Async tasksFutures.add(rewardsService.calculateRewards(user));
 		}
+
+		stopWatch.start();
+		allUsers.forEach(user -> {rewardsService.calculateRewards(user); System.out.println(user.getUserName());});
+		//@Async CompletableFuture<Void> allFutures = CompletableFuture.allOf(tasksFutures.toArray(new CompletableFuture[0]));
+		//@Async allFutures.join();
 		stopWatch.stop();
 
-		System.out.println("highVolumeGetRewards: Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds."); 
+		System.out.println("highVolumeGetRewards: Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
+		allUsers.forEach(user -> {
+			assertNotEquals(0, user.getUserRewards().size());
+		});
 		assertTrue(TimeUnit.MINUTES.toSeconds(20) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
 	}
 	

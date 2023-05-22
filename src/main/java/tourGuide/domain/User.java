@@ -1,13 +1,13 @@
 package tourGuide.domain;
 
 import gpsUtil.location.VisitedLocation;
-import org.springframework.scheduling.annotation.Async;
 import tripPricer.Provider;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class User {
 
@@ -108,6 +108,7 @@ public class User {
        if (userRewards.stream().filter(r -> r.attraction.equals(userReward.attraction)).count() == 0) {
             userRewards.add(userReward);
        }
+
     }
 
 }
