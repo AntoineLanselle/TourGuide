@@ -66,6 +66,8 @@ public class PerformanceTest {
 	}
 
 	@Test
+
+	//TODO: corriger la version de gradle.
 	public void highVolumeGetRewards() {
 		// Users should be incremented up to 100,000, and test finishes within 20 minutes
 		StopWatch stopWatch = new StopWatch();
@@ -79,12 +81,13 @@ public class PerformanceTest {
 		}
 
 		stopWatch.start();
-		allUsers.forEach(user -> {rewardsService.calculateRewards(user); System.out.println(user.getUserName());});
+		rewardsService.calculateAllRewards();
+		//allUsers.forEach(user -> {rewardsService.calculateRewards(user); System.out.println(user.getUserName());});
 		//@Async CompletableFuture<Void> allFutures = CompletableFuture.allOf(tasksFutures.toArray(new CompletableFuture[0]));
 		//@Async allFutures.join();
 		stopWatch.stop();
-
 		System.out.println("highVolumeGetRewards: Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
+
 		allUsers.forEach(user -> {
 			assertNotEquals(0, user.getUserRewards().size());
 		});

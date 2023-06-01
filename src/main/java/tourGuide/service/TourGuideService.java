@@ -12,6 +12,11 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Service for TourGuide.
+ *
+ * @author Antoine Lanselle
+ */
 public interface TourGuideService {
 
     public List<TouristAttractionDetailsDTO> getNearbyAttractions(User user) throws ExecutionException, InterruptedException;
@@ -19,5 +24,7 @@ public interface TourGuideService {
     public CompletableFuture<VisitedLocation> trackUserLocation(User user);
 
     public VisitedLocation getLastVisitedLocation(User user) throws ExecutionException, InterruptedException;
+
+    public Map<String, Object> getAllCurrentLocations(List<User> allUsers) throws ExecutionException, InterruptedException;
 
 }

@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
 
         preferences.setAttractionProximity(preferencesDTO.getAttractionProximity());
         preferences.setLowerPricePoint(Money.of(BigDecimal.valueOf(preferencesDTO.getLowerPricePoint()), preferences.getCurrency()));
-        preferences.setLowerPricePoint(Money.of(BigDecimal.valueOf(preferencesDTO.getHighPricePoint()), preferences.getCurrency()));
+        preferences.setHighPricePoint(Money.of(BigDecimal.valueOf(preferencesDTO.getHighPricePoint()), preferences.getCurrency()));
         preferences.setTripDuration(preferencesDTO.getTripDuration());
         preferences.setTicketQuantity(preferencesDTO.getTicketQuantity());
         preferences.setNumberOfAdults(preferencesDTO.getNumberOfAdults());

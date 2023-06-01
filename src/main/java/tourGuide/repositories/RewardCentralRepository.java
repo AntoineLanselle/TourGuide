@@ -5,6 +5,11 @@ import rewardCentral.RewardCentral;
 
 import java.util.UUID;
 
+/**
+ * RewardCentral repository.
+ *
+ * @author Antoine Lanselle
+ */
 @Repository
 public class RewardCentralRepository {
 

@@ -9,6 +9,11 @@ import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.IntStream;
 
+/**
+ * InternalTestHelper provides and stores users in memory for testing purposes.
+ *
+ * @author Antoine Lanselle
+ */
 public class InternalTestHelper {
 
     // Set this default up to 100,000 for testing

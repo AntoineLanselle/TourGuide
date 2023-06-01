@@ -13,6 +13,11 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Service implementation for TourGuide.
+ *
+ * @author Antoine Lanselle
+ */
 @Service
 public class TourGuideServiceImpl extends Thread implements TourGuideService  {
 
@@ -65,6 +70,19 @@ public class TourGuideServiceImpl extends Thread implements TourGuideService  {
         VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ? user.getLastVisitedLocation()
                 : trackUserLocation(user).get();
         return visitedLocation;
+    }
+
+    @Override
+    public Map<String, Object> getAllCurrentLocations(List<User> allUsers) throws ExecutionException, InterruptedException {
+        Map<String, Object> currentLocations = new HashMap<String, Object>();
+        for (User user : allUsers) {
+            Map<String, Double> userCoord = new HashMap<String, Double>();
+            VisitedLocation userLocation = getLastVisitedLocation(user);
+            userCoord.put("longitude", userLocation.location.longitude);
+            userCoord.put("latitude", userLocation.location.latitude);
+            currentLocations.put(user.getUserId().toString(), userCoord);
+        }
+        return currentLocations;
     }
 
 }

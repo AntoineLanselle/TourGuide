@@ -18,6 +18,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Service implementation for Rewards.
+ *
+ * @author Antoine Lanselle
+ */
 @Service
 public class RewardsServiceImpl implements RewardsService {
 
@@ -49,31 +54,23 @@ public class RewardsServiceImpl implements RewardsService {
     }
 
     @Override
-    public CompletableFuture<Void> calculateRewards(User user) {
-        logger.atInfo().log("Calculating rewards of user " + user.getUserId());
+    public void calculateRewards(User user) {
+        //logger.atInfo().log("Calculating rewards of user " + user.getUserId());
         List<VisitedLocation> userLocations = user.getVisitedLocations();
         List<Attraction> attractions = gpsUtil.getAttractions();
 
-        //List<CompletableFuture> tasksFutures = new ArrayList<>();
         // pour chaque localisation de l utilisateur on regarde si chaque attractions etait proche ou non
- /*       for (VisitedLocation visitedLocation : userLocations) {
+        for (VisitedLocation visitedLocation : userLocations) {
             for (Attraction attraction : attractions) {
                 // on regarde si la localisation est proche de l attraction
                 if (nearAttraction(visitedLocation, attraction)) {
-                    logger.atInfo().log("Visited location found for user " + user.getUserId() + ", " + attraction.attractionName);
-                    tasksFutures.add(
-                            CompletableFuture.runAsync(()-> {
-                                user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
-                            }
-                           , executorService));
+                    //logger.atInfo().log("Visited location found for user " + user.getUserId() + ", " + attraction.attractionName);
+                    user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
                 }
             }
         }
-        CompletableFuture allFutures = CompletableFuture.allOf(tasksFutures.toArray(new CompletableFuture[0]));
-        allFutures.join();
     }
-*/
-        return CompletableFuture.runAsync(() -> {
+ /*       return CompletableFuture.runAsync(() -> {
             for (VisitedLocation visitedLocation : userLocations) {
                 attractions.stream().filter(attraction -> nearAttraction(visitedLocation, attraction))
                         .forEach(attraction ->
@@ -82,8 +79,10 @@ public class RewardsServiceImpl implements RewardsService {
             }
         }, executorService);
     }
-
+*/
+/*
     //TODO faire appelle à cette methode pour le test de performance
+    @Override
     public List<UserReward> calculateAllRewards() {
         List<Attraction> attractions = gpsUtil.getAttractions();
         List<UserReward> result = new ArrayList<>();
@@ -91,13 +90,11 @@ public class RewardsServiceImpl implements RewardsService {
         List<CompletableFuture<UserReward>> allUsersRewardsFutures =
                 userService.getAllUsers().stream().map(
                         user -> CompletableFuture.supplyAsync( () -> {
-                            UserReward userReward = new UserReward();
-                            userReward.setRewardPoints();
+                            calculateRewards(user);
                         })
                 );
-
         return result;
-    }
+    }*/
 
     @Override
     public boolean isWithinAttractionProximity(Attraction attraction, Location location) {

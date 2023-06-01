@@ -8,6 +8,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * GpsUtil repository.
+ *
+ * @author Antoine Lanselle
+ */
 @Repository
 public class GpsUtilRepository {
 

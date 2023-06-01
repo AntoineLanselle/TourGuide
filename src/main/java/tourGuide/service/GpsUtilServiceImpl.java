@@ -10,6 +10,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
+/**
+ * Service implementation for GpsUtil.
+ *
+ * @author Antoine Lanselle
+ */
 @Service
 public class GpsUtilServiceImpl implements GpsUtilService {
 

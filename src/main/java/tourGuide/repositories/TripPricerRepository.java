@@ -7,6 +7,11 @@ import tripPricer.TripPricer;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * TripPricer repository.
+ *
+ * @author Antoine Lanselle
+ */
 @Repository
 public class TripPricerRepository {
 

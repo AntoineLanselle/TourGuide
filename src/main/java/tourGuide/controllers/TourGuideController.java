@@ -22,6 +22,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Controller for TourGuide.
+ *
+ * @author Antoine Lanselle
+ */
 @RestController
 public class TourGuideController {
 
@@ -34,83 +39,114 @@ public class TourGuideController {
     @Autowired
     private TripPricerService tripPricerService;
 
+    /**
+     * Returns a welcome message.
+     *
+     * @return String a message to welcome user.
+     */
     @GetMapping("/")
     public String index() {
+        logger.info("GET request - index");
+
         return "Greetings from TourGuide!";
     }
 
+    /**
+     * Returns the location of the user.
+     *
+     * @param userName String of the user name.
+     * @return a ResponseEntity with status OK and a Location as body.
+     */
     @GetMapping("/getLocation")
     public ResponseEntity<Location> getLocation(@RequestParam String userName) throws ExecutionException, InterruptedException {
+        logger.info("GET request - getLocation of user: " + userName);
+
         VisitedLocation visitedLocation = tourGuideService.getLastVisitedLocation(userService.getUser(userName));
         return ResponseEntity.status(HttpStatus.OK).body(visitedLocation.location);
     }
 
-    // Done: Change this method to no longer return a List of Attractions.
-    // Instead: Get the closest five tourist attractions to the user - no matter how
-    // far away they are.
-    // Return a new JSON object that contains:
-    // Name of Tourist attraction,
-    // Tourist attractions lat/long,
-    // The user's location lat/long,
-    // The distance in miles between the user's location and each of the
-    // attractions.
-    // The reward points for visiting each Attraction.
-    // Note: Attraction reward points can be gathered from RewardsCentral
+    /**
+     * Returns a list of attractions near the user.
+     *
+     * @param userName String of the user name.
+     * @return a ResponseEntity with status OK and a list of nearby attractions as body.
+     */
     @GetMapping("/getNearbyAttractions")
     public ResponseEntity<List<TouristAttractionDetailsDTO>> getNearbyAttractions(@RequestParam String userName) throws ExecutionException, InterruptedException {
+        logger.info("GET request - getNearbyAttractions of user: " + userName);
+
         User user = userService.getUser(userName);
         List<TouristAttractionDetailsDTO> NearbyAttractions = tourGuideService.getNearbyAttractions(user);
         return ResponseEntity.status(HttpStatus.OK).body(NearbyAttractions);
     }
 
+    /**
+     * Returns the rewards that a user has earned.
+     *
+     * @param userName String of the user name.
+     * @return a ResponseEntity with status OK and a list UserReward as body.
+     */
     @GetMapping("/getRewards")
     public ResponseEntity<List<UserReward>> getRewards(@RequestParam String userName) {
+        logger.info("GET request - getRewards of user: " + userName);
+
         User user = userService.getUser(userName);
         return ResponseEntity.status(HttpStatus.OK).body(user.getUserRewards());
     }
 
-    // Done: Get a list of every user's most recent location as JSON
-    // - Note: does not use gpsUtil to query for their current location,
-    // but rather gathers the user's current location from their stored location
-    // history.
-    //
-    // Return object should be the just a JSON mapping of userId to Locations
-    // similar to:
-    // {
-    // "019b04a9-067a-4c76-8817-ee75088c3822":
-    // {"longitude":-48.188821,"latitude":74.84371}
-    // ...
-    // }
+    /**
+     * Returns all the current locations of all the tour guides.
+     *
+     * @return a ResponseEntity with status OK and a Map<String, Object> as body where the String is the userName and Object is the location.
+     */
     @GetMapping("/getAllCurrentLocations")
-    //Decaler dans le service TourGuide ?
     public ResponseEntity<Map<String, Object>> getAllCurrentLocations() throws ExecutionException, InterruptedException {
+        logger.info("GET request - getAllCurrentLocations");
+
         List<User> allUsers = userService.getAllUsers();
-        Map<String, Object> currentLocations = new HashMap<String, Object>();
-        for (User user : allUsers) {
-            Map<String, Double> userCoord = new HashMap<String, Double>();
-            VisitedLocation userLocation = tourGuideService.getLastVisitedLocation(user);
-            userCoord.put("longitude", userLocation.location.longitude);
-            userCoord.put("latitude", userLocation.location.latitude);
-            currentLocations.put(user.getUserId().toString(), userCoord);
-        }
+        Map<String, Object> currentLocations = tourGuideService.getAllCurrentLocations(allUsers);
         return ResponseEntity.status(HttpStatus.OK).body(currentLocations);
     }
 
+    /**
+     * Returns a list of providers that have deals for the user.
+     *
+     * @param userName String of the user name.
+     * @return a ResponseEntity with status OK and a list of provider as body.
+     */
     @GetMapping("/getTripDeals")
     public ResponseEntity<List<Provider>> getTripDeals(@RequestParam String userName) {
+        logger.info("GET request - getTripDeals for user: " + userName);
+
         List<Provider> providers = tripPricerService.getTripDeals(userService.getUser(userName));
         return ResponseEntity.status(HttpStatus.OK).body(providers);
     }
 
+    /**
+     * Update the user preferences for the given user.
+     *
+     * @param userName String of the user name.
+     * @param userPreferencesDTO UserPreferencesDTO object that contains the user preferences.
+     * @return a ResponseEntity with status OK.
+     */
     @PutMapping("/setUserPreferences")
-    //ajouter String currency dans le DTO ?
     public ResponseEntity setUserPreferences(@RequestParam String userName, @RequestBody UserPreferencesDTO userPreferencesDTO) {
+        logger.info("PUT request - setUserPreferences of user: " + userName);
+
         userService.setUserPreferences(userService.getUser(userName), userPreferencesDTO);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    /**
+     * Get the user preferences for the given user.
+     *
+     * @param userName String of the user name.
+     * @return a ResponseEntity with status OK and UserPreferencesDTO of the user as body.
+     */
     @GetMapping("/getUserPreferences")
     public ResponseEntity<UserPreferencesDTO> getUserPreferences(@RequestParam String userName) {
+        logger.info("GET request - getUserPreferences of user: " + userName);
+
         return ResponseEntity.status(HttpStatus.OK).body(userService.getUserPreferences(userService.getUser(userName)));
     }
 

@@ -7,7 +7,11 @@ import tourGuide.helper.InternalTestHelper;
 import java.util.HashMap;
 import java.util.Map;
 
-//Database connection will be used for external users, but for testing purposes internal users are provided and stored in memory
+/**
+ * User repository.
+ *
+ * @author Antoine Lanselle
+ */
 @Repository
 public class UserRepository {
 
