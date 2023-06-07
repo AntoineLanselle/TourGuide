@@ -33,7 +33,7 @@ public class User {
     }
 
     public String getUserName() {
-<span class="fc" id="L36">        return userName;</span>
+<span class="nc" id="L36">        return userName;</span>
     }
 
     public void setPhoneNumber(String phoneNumber) {
@@ -65,7 +65,7 @@ public class User {
 <span class="nc" id="L65">    }</span>
 
     public List&lt;VisitedLocation&gt; getVisitedLocations() {
-<span class="fc" id="L68">        return visitedLocations;</span>
+<span class="nc" id="L68">        return visitedLocations;</span>
     }
 
     public void setUserRewards(List&lt;UserReward&gt; userRewards) {
@@ -81,12 +81,12 @@ public class User {
 <span class="nc" id="L81">    }</span>
 
     public UserPreferences getUserPreferences() {
-<span class="nc" id="L84">        return userPreferences;</span>
+<span class="fc" id="L84">        return userPreferences;</span>
     }
 
     public void setTripDeals(List&lt;Provider&gt; tripDeals) {
-<span class="nc" id="L88">        this.tripDeals = tripDeals;</span>
-<span class="nc" id="L89">    }</span>
+<span class="fc" id="L88">        this.tripDeals = tripDeals;</span>
+<span class="fc" id="L89">    }</span>
 
     public List&lt;Provider&gt; getTripDeals() {
 <span class="nc" id="L92">        return tripDeals;</span>
@@ -101,15 +101,15 @@ public class User {
 <span class="nc" id="L101">    }</span>
 
     public void addToVisitedLocations(VisitedLocation visitedLocation) {
-<span class="fc" id="L104">        visitedLocations.add(visitedLocation);</span>
-<span class="fc" id="L105">    }</span>
+<span class="nc" id="L104">        visitedLocations.add(visitedLocation);</span>
+<span class="nc" id="L105">    }</span>
 
     public void addUserReward(UserReward userReward) {
-<span class="pc bpc" id="L108" title="1 of 2 branches missed.">       if (userRewards.stream().filter(r -&gt; r.attraction.equals(userReward.attraction)).count() == 0) {</span>
-<span class="fc" id="L109">            userRewards.add(userReward);</span>
+<span class="nc bnc" id="L108" title="All 2 branches missed.">       if (userRewards.stream().filter(r -&gt; r.attraction.equals(userReward.attraction)).count() == 0) {</span>
+<span class="nc" id="L109">            userRewards.add(userReward);</span>
        }
 
-<span class="fc" id="L112">    }</span>
+<span class="nc" id="L112">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

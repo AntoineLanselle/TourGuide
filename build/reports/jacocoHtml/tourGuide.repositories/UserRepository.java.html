@@ -7,20 +7,24 @@ import tourGuide.helper.InternalTestHelper;
 import java.util.HashMap;
 import java.util.Map;
 
-//Database connection will be used for external users, but for testing purposes internal users are provided and stored in memory
+/**
+ * User repository.
+ *
+ * @author Antoine Lanselle
+ */
 @Repository
 public class UserRepository {
 
     private final Map&lt;String, User&gt; usersList;
 
-<span class="fc" id="L16">    public UserRepository() {</span>
-<span class="fc" id="L17">        usersList = new HashMap&lt;&gt;();</span>
-<span class="fc" id="L18">        InternalTestHelper testHelper = new InternalTestHelper();</span>
-<span class="fc" id="L19">        testHelper.initializeInternalUsers(this.usersList);</span>
-<span class="fc" id="L20">    }</span>
+<span class="nc" id="L20">    public UserRepository() {</span>
+<span class="nc" id="L21">        usersList = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L22">        InternalTestHelper testHelper = new InternalTestHelper();</span>
+<span class="nc" id="L23">        testHelper.initializeInternalUsers(this.usersList);</span>
+<span class="nc" id="L24">    }</span>
 
     public Map&lt;String, User&gt; getUsersList() {
-<span class="fc" id="L23">        return this.usersList;</span>
+<span class="nc" id="L27">        return this.usersList;</span>
     }
 
 }

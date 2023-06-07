@@ -76,8 +76,8 @@ public class TourGuideController {
         logger.info("GET request - getNearbyAttractions of user: " + userName);
 
         User user = userService.getUser(userName);
-        List<TouristAttractionDetailsDTO> NearbyAttractions = tourGuideService.getNearbyAttractions(user);
-        return ResponseEntity.status(HttpStatus.OK).body(NearbyAttractions);
+        List<TouristAttractionDetailsDTO> nearbyAttractions = tourGuideService.getNearbyAttractions(user);
+        return ResponseEntity.status(HttpStatus.OK).body(nearbyAttractions);
     }
 
     /**

@@ -12,120 +12,77 @@ import tourGuide.domain.User;
 import tourGuide.domain.UserReward;
 import tourGuide.repositories.RewardCentralRepository;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
+/**
+ * Service implementation for Rewards.
+ *
+ * @author Antoine Lanselle
+ */
 @Service
-<span class="fc" id="L22">public class RewardsServiceImpl implements RewardsService {</span>
+<span class="nc" id="L24">public class RewardsServiceImpl implements RewardsService {</span>
 
-<span class="fc" id="L24">    private Logger logger = LoggerFactory.getLogger(RewardsServiceImpl.class);</span>
+<span class="nc" id="L26">    private Logger logger = LoggerFactory.getLogger(RewardsServiceImpl.class);</span>
 
     @Autowired
     private RewardCentralRepository rewardsCentral;
     @Autowired
     private GpsUtilService gpsUtil;
 
-    @Autowired
-    private UserService userService;
-
     private static final double STATUTE_MILES_PER_NAUTICAL_MILE = 1.15077945;
     // proximity in miles
-<span class="fc" id="L36">    private int defaultProximityBuffer = 10;</span>
-<span class="fc" id="L37">    private int proximityBuffer = defaultProximityBuffer;</span>
-<span class="fc" id="L38">    private int attractionProximityRange = 200;</span>
-<span class="fc" id="L39">    private final ExecutorService executorService = Executors.newFixedThreadPool(1000);</span>
+<span class="nc" id="L35">    private int defaultProximityBuffer = 10;</span>
+<span class="nc" id="L36">    private int proximityBuffer = defaultProximityBuffer;</span>
+<span class="nc" id="L37">    private int attractionProximityRange = 200;</span>
+<span class="nc" id="L38">    private final ExecutorService executorService = Executors.newFixedThreadPool(1000);</span>
 
     @Override
-    public void setProximityBuffer(int proximityBuffer) {
-<span class="nc" id="L43">        this.proximityBuffer = proximityBuffer;</span>
-<span class="nc" id="L44">    }</span>
+    public void calculateRewards(User user) {
+<span class="nc" id="L42">        logger.atInfo().log(&quot;Calculating rewards of user &quot; + user.getUserName());</span>
 
-    @Override
-    public void setDefaultProximityBuffer() {
-<span class="nc" id="L48">        proximityBuffer = defaultProximityBuffer;</span>
-<span class="nc" id="L49">    }</span>
+<span class="nc" id="L44">        CopyOnWriteArrayList&lt;VisitedLocation&gt; userLocations = new CopyOnWriteArrayList&lt;&gt;(user.getVisitedLocations());</span>
+<span class="nc" id="L45">        List&lt;Attraction&gt; attractions = gpsUtil.getAttractions();</span>
 
-    @Override
-    @Async
-    public CompletableFuture&lt;Void&gt; calculateRewards(User user) {
-<span class="fc" id="L54">        logger.atInfo().log(&quot;Calculating rewards of user &quot; + user.getUserId());</span>
-<span class="fc" id="L55">        List&lt;VisitedLocation&gt; userLocations = user.getVisitedLocations();</span>
-<span class="fc" id="L56">        List&lt;Attraction&gt; attractions = gpsUtil.getAttractions();</span>
+<span class="nc" id="L47">        CopyOnWriteArrayList&lt;CompletableFuture&gt; futures = new CopyOnWriteArrayList&lt;&gt;();</span>
 
-        //List&lt;CompletableFuture&gt; tasksFutures = new ArrayList&lt;&gt;();
-        // pour chaque localisation de l utilisateur on regarde si chaque attractions etait proche ou non
- /*       for (VisitedLocation visitedLocation : userLocations) {
-            for (Attraction attraction : attractions) {
-                // on regarde si la localisation est proche de l attraction
-                if (nearAttraction(visitedLocation, attraction)) {
-                    logger.atInfo().log(&quot;Visited location found for user &quot; + user.getUserId() + &quot;, &quot; + attraction.attractionName);
-                    tasksFutures.add(
-                            CompletableFuture.runAsync(()-&gt; {
-                                user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user)));
+<span class="nc bnc" id="L49" title="All 2 branches missed.">        for(VisitedLocation visitedLocation : userLocations) {</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">            for (Attraction attr : attractions) {</span>
+<span class="nc" id="L51">                futures.add(</span>
+<span class="nc" id="L52">                        CompletableFuture.runAsync(()-&gt; {</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">                            if(user.getUserRewards().stream().filter(r -&gt; r.attraction.attractionName.equals(attr.attractionName)).count() == 0) {</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">                                if(nearAttraction(visitedLocation, attr)) {</span>
+<span class="nc" id="L55">                                    user.addUserReward( new UserReward(visitedLocation, attr,  rewardsCentral.getAttractionRewardPoints(attr.attractionId, user.getUserId())));</span>
+                                }
                             }
-                           , executorService));
-                }
-            }
-        }
-        CompletableFuture allFutures = CompletableFuture.allOf(tasksFutures.toArray(new CompletableFuture[0]));
-        allFutures.join();
-    }
-*/
-<span class="fc" id="L77">        return CompletableFuture.runAsync(() -&gt; {</span>
-<span class="fc bfc" id="L78" title="All 2 branches covered.">            for (VisitedLocation visitedLocation : userLocations) {</span>
-<span class="fc" id="L79">                attractions.stream().filter(attraction -&gt; nearAttraction(visitedLocation, attraction))</span>
-<span class="fc" id="L80">                        .forEach(attraction -&gt;</span>
-<span class="fc" id="L81">                                user.addUserReward(new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user))</span>
-                        ));
-<span class="fc" id="L83">            }</span>
-<span class="fc" id="L84">        }, executorService);</span>
-    }
-/*
-    public List&lt;UserReward&gt; calculateAllRewards() {
-        List&lt;Attraction&gt; attractions = gpsUtil.getAttractions();
-        List&lt;UserReward&gt; result = new ArrayList&lt;&gt;();
-
-        List&lt;CompletableFuture&lt;UserReward&gt;&gt; allUsersRewardsFutures =
-                userService.getAllUsers().stream().map(
-                        user -&gt; CompletableFuture.supplyAsync( () -&gt; {
-                            UserReward userReward = new UserReward();
-                            userReward.setRewardPoints();
-                        })
-                )
-
-        return result;
-    }*/
-
-    @Override
-    public boolean isWithinAttractionProximity(Attraction attraction, Location location) {
-<span class="nc bnc" id="L104" title="All 2 branches missed.">        return getDistance(attraction, location) &gt; attractionProximityRange ? false : true;</span>
-    }
+<span class="nc" id="L58">                        },executorService)</span>
+                );
+<span class="nc" id="L60">            }</span>
+<span class="nc" id="L61">        }</span>
+<span class="nc" id="L62">    }</span>
 
     private boolean nearAttraction(VisitedLocation visitedLocation, Attraction attraction) {
-<span class="fc bfc" id="L108" title="All 2 branches covered.">        return getDistance(attraction, visitedLocation.location) &gt; proximityBuffer ? false : true;</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">        return getDistance(attraction, visitedLocation.location) &gt; proximityBuffer ? false : true;</span>
     }
 
     @Override
     public int getRewardPoints(Attraction attraction, User user) {
-<span class="fc" id="L113">        return rewardsCentral.getAttractionRewardPoints(attraction.attractionId, user.getUserId());</span>
+<span class="nc" id="L70">        return rewardsCentral.getAttractionRewardPoints(attraction.attractionId, user.getUserId());</span>
     }
 
     @Override
     public double getDistance(Location loc1, Location loc2) {
-<span class="fc" id="L118">        double lat1 = Math.toRadians(loc1.latitude);</span>
-<span class="fc" id="L119">        double lon1 = Math.toRadians(loc1.longitude);</span>
-<span class="fc" id="L120">        double lat2 = Math.toRadians(loc2.latitude);</span>
-<span class="fc" id="L121">        double lon2 = Math.toRadians(loc2.longitude);</span>
+<span class="nc" id="L75">        double lat1 = Math.toRadians(loc1.latitude);</span>
+<span class="nc" id="L76">        double lon1 = Math.toRadians(loc1.longitude);</span>
+<span class="nc" id="L77">        double lat2 = Math.toRadians(loc2.latitude);</span>
+<span class="nc" id="L78">        double lon2 = Math.toRadians(loc2.longitude);</span>
 
-<span class="fc" id="L123">        double angle = Math</span>
-<span class="fc" id="L124">                .acos(Math.sin(lat1) * Math.sin(lat2) + Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2));</span>
+<span class="nc" id="L80">        double angle = Math</span>
+<span class="nc" id="L81">                .acos(Math.sin(lat1) * Math.sin(lat2) + Math.cos(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2));</span>
 
-<span class="fc" id="L126">        double nauticalMiles = 60 * Math.toDegrees(angle);</span>
-<span class="fc" id="L127">        double statuteMiles = STATUTE_MILES_PER_NAUTICAL_MILE * nauticalMiles;</span>
-<span class="fc" id="L128">        return statuteMiles;</span>
+<span class="nc" id="L83">        double nauticalMiles = 60 * Math.toDegrees(angle);</span>
+<span class="nc" id="L84">        double statuteMiles = STATUTE_MILES_PER_NAUTICAL_MILE * nauticalMiles;</span>
+<span class="nc" id="L85">        return statuteMiles;</span>
     }
 
 }

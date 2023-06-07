@@ -10,21 +10,26 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
+/**
+ * Service implementation for GpsUtil.
+ *
+ * @author Antoine Lanselle
+ */
 @Service
-<span class="fc" id="L14">public class GpsUtilServiceImpl implements GpsUtilService {</span>
+<span class="nc" id="L19">public class GpsUtilServiceImpl implements GpsUtilService {</span>
 
     @Autowired
     private GpsUtilRepository gpsUtil;
 
     @Override
     public List&lt;Attraction&gt; getAttractions() {
-<span class="fc" id="L21">        return gpsUtil.getAttractions();</span>
+<span class="nc" id="L26">        return gpsUtil.getAttractions();</span>
     }
 
     @Override
     public VisitedLocation getUserLocation(UUID userId) {
-<span class="nc" id="L26">        Locale.setDefault(Locale.ENGLISH);</span>
-<span class="nc" id="L27">        return gpsUtil.getUserLocation(userId);</span>
+<span class="nc" id="L31">        Locale.setDefault(Locale.ENGLISH);</span>
+<span class="nc" id="L32">        return gpsUtil.getUserLocation(userId);</span>
     }
 
 }

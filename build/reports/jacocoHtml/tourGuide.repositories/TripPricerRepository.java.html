@@ -7,21 +7,26 @@ import tripPricer.TripPricer;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * TripPricer repository.
+ *
+ * @author Antoine Lanselle
+ */
 @Repository
 public class TripPricerRepository {
 
     private TripPricer tripPricer;
 
-<span class="fc" id="L15">    public TripPricerRepository() {</span>
-<span class="fc" id="L16">        this.tripPricer = new TripPricer();</span>
-<span class="fc" id="L17">    }</span>
+<span class="nc" id="L20">    public TripPricerRepository() {</span>
+<span class="nc" id="L21">        this.tripPricer = new TripPricer();</span>
+<span class="nc" id="L22">    }</span>
 
     public List&lt;Provider&gt; getPrice(String apiKey, UUID attractionId, int adults, int children, int nightsStay, int rewardsPoints) {
-<span class="nc" id="L20">        return tripPricer.getPrice(apiKey, attractionId, adults, children, nightsStay, rewardsPoints);</span>
+<span class="nc" id="L25">        return tripPricer.getPrice(apiKey, attractionId, adults, children, nightsStay, rewardsPoints);</span>
     }
 
     public String getProviderName(String apiKey, int adults) {
-<span class="nc" id="L24">        return tripPricer.getProviderName(apiKey, adults);</span>
+<span class="nc" id="L29">        return tripPricer.getProviderName(apiKey, adults);</span>
     }
 
 }

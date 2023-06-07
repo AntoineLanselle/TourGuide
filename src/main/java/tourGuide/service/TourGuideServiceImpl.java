@@ -3,6 +3,8 @@ package tourGuide.service;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,8 @@ import tourGuide.domain.User;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Service implementation for TourGuide.
@@ -21,12 +25,14 @@ import java.util.concurrent.ExecutionException;
 @Service
 public class TourGuideServiceImpl extends Thread implements TourGuideService  {
 
-    // TODO private Logger logger = LoggerFactory.getLogger(TourGuideServiceImpl.class);
+    private Logger logger = LoggerFactory.getLogger(TourGuideServiceImpl.class);
 
     @Autowired
     private GpsUtilService gpsUtilService;
     @Autowired
     private RewardsService rewardsService;
+
+    private ExecutorService executorService = Executors.newFixedThreadPool(10000);
 
     @Override
     public List<TouristAttractionDetailsDTO> getNearbyAttractions(User user) throws ExecutionException, InterruptedException {
@@ -52,17 +58,14 @@ public class TourGuideServiceImpl extends Thread implements TourGuideService  {
     }
 
     @Override
-    @Async
     public CompletableFuture<VisitedLocation> trackUserLocation(User user) {
-        VisitedLocation visitedLocation = gpsUtilService.getUserLocation(user.getUserId());
-        user.addToVisitedLocations(visitedLocation);
-        rewardsService.calculateRewards(user);
-        return CompletableFuture.completedFuture(visitedLocation);
-        /*return gpsUtilService.getUserLocation(user.getUserId()).thenApply(visitLocation -> {
-            user.addToVisitedLocations(visitLocation);
-            rewardsService.calculateRewards((user));
-            return CompletableFuture.completedFuture(visitLocation).join();
-        })*/
+        logger.info("Track Location for user: " + user.getUserName());
+        return CompletableFuture.supplyAsync(() -> gpsUtilService.getUserLocation(user.getUserId()), executorService)
+                .thenApply(visitedLocation -> {
+                    user.addToVisitedLocations(visitedLocation);
+                    rewardsService.calculateRewards(user);
+                    return visitedLocation;
+                });
     }
 
     @Override

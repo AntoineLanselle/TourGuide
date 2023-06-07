@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * @author Antoine Lanselle
  */
 @Service
-<span class="fc" id="L21">public class UserServiceImpl implements UserService {</span>
+<span class="nc" id="L21">public class UserServiceImpl implements UserService {</span>
 
     // TODO private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 
     @Override
     public List&lt;User&gt; getAllUsers() {
-<span class="fc" id="L35">        return userRepository.getUsersList().values().stream().collect(Collectors.toList());</span>
+<span class="nc" id="L35">        return userRepository.getUsersList().values().stream().collect(Collectors.toList());</span>
     }
 
     @Override
@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
 
 <span class="nc" id="L49">        preferences.setAttractionProximity(preferencesDTO.getAttractionProximity());</span>
 <span class="nc" id="L50">        preferences.setLowerPricePoint(Money.of(BigDecimal.valueOf(preferencesDTO.getLowerPricePoint()), preferences.getCurrency()));</span>
-<span class="nc" id="L51">        preferences.setLowerPricePoint(Money.of(BigDecimal.valueOf(preferencesDTO.getHighPricePoint()), preferences.getCurrency()));</span>
+<span class="nc" id="L51">        preferences.setHighPricePoint(Money.of(BigDecimal.valueOf(preferencesDTO.getHighPricePoint()), preferences.getCurrency()));</span>
 <span class="nc" id="L52">        preferences.setTripDuration(preferencesDTO.getTripDuration());</span>
 <span class="nc" id="L53">        preferences.setTicketQuantity(preferencesDTO.getTicketQuantity());</span>
 <span class="nc" id="L54">        preferences.setNumberOfAdults(preferencesDTO.getNumberOfAdults());</span>

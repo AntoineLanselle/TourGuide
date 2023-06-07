@@ -5,17 +5,22 @@ import rewardCentral.RewardCentral;
 
 import java.util.UUID;
 
+/**
+ * RewardCentral repository.
+ *
+ * @author Antoine Lanselle
+ */
 @Repository
 public class RewardCentralRepository {
 
     private RewardCentral rewardCentral;
 
-<span class="fc" id="L13">    public RewardCentralRepository() {</span>
-<span class="fc" id="L14">        this.rewardCentral = new RewardCentral();</span>
-<span class="fc" id="L15">    }</span>
+<span class="nc" id="L18">    public RewardCentralRepository() {</span>
+<span class="nc" id="L19">        this.rewardCentral = new RewardCentral();</span>
+<span class="nc" id="L20">    }</span>
 
     public int getAttractionRewardPoints(UUID attractionId, UUID userId) {
-<span class="fc" id="L18">        return rewardCentral.getAttractionRewardPoints(attractionId, userId);</span>
+<span class="nc" id="L23">        return rewardCentral.getAttractionRewardPoints(attractionId, userId);</span>
     }
 
 }

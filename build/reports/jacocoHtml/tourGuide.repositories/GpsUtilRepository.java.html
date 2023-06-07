@@ -8,23 +8,28 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * GpsUtil repository.
+ *
+ * @author Antoine Lanselle
+ */
 @Repository
 public class GpsUtilRepository {
 
     private GpsUtil gpsUtil;
     private List&lt;Attraction&gt; attractionsList;
 
-<span class="fc" id="L17">    public GpsUtilRepository() {</span>
-<span class="fc" id="L18">        gpsUtil = new GpsUtil();</span>
-<span class="fc" id="L19">        attractionsList = gpsUtil.getAttractions();</span>
-<span class="fc" id="L20">    }</span>
+<span class="nc" id="L22">    public GpsUtilRepository() {</span>
+<span class="nc" id="L23">        gpsUtil = new GpsUtil();</span>
+<span class="nc" id="L24">        attractionsList = gpsUtil.getAttractions();</span>
+<span class="nc" id="L25">    }</span>
 
     public List&lt;Attraction&gt; getAttractions() {
-<span class="fc" id="L23">        return attractionsList;</span>
+<span class="nc" id="L28">        return attractionsList;</span>
     }
 
     public VisitedLocation getUserLocation(UUID userId) {
-<span class="nc" id="L27">        return gpsUtil.getUserLocation(userId);</span>
+<span class="nc" id="L32">        return gpsUtil.getUserLocation(userId);</span>
     }
 
 }
