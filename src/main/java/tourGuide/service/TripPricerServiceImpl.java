@@ -1,6 +1,8 @@
 package tourGuide.service;
 
 import org.javamoney.moneta.Money;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tourGuide.domain.User;
@@ -21,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 public class TripPricerServiceImpl implements TripPricerService {
 
-    // TODO private Logger logger = LoggerFactory.getLogger(TripPricerServiceImpl.class);
+    private Logger logger = LoggerFactory.getLogger(TripPricerServiceImpl.class);
 
     @Autowired
     private TripPricerRepository tripPricer;

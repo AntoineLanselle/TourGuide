@@ -1,6 +1,8 @@
 package tourGuide.service;
 
 import org.javamoney.moneta.Money;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tourGuide.DTO.UserPreferencesDTO;
@@ -20,7 +22,7 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
 
-    // TODO private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+    private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
     private UserRepository userRepository;
@@ -32,18 +34,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAllUsers() {
+        logger.info("Getting all users from userRepository");
         return userRepository.getUsersList().values().stream().collect(Collectors.toList());
     }
 
     @Override
     public void addUser(User user) {
+        logger.info("Trying to add user: " + user.getUserName() + " in userRepository");
         if (!userRepository.getUsersList().containsKey(user.getUserName())) {
             userRepository.getUsersList().put(user.getUserName(), user);
+            logger.info("User: " + user.getUserName() + " has been added in userRepository");
         }
     }
 
     @Override
     public void setUserPreferences(User user, UserPreferencesDTO preferencesDTO) {
+        logger.info("Set new user preferences for user: " + user.getUserName());
         UserPreferences preferences = user.getUserPreferences();
 
         preferences.setAttractionProximity(preferencesDTO.getAttractionProximity());
@@ -57,6 +63,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserPreferencesDTO getUserPreferences(User user) {
+        logger.info("Get user preferences of user: " + user.getUserName());
         UserPreferences preferences = user.getUserPreferences();
         UserPreferencesDTO userPreferencesDTO =
                 new UserPreferencesDTO(
