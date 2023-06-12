@@ -8,6 +8,7 @@ import org.apache.commons.lang3.time.StopWatch;
 
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,7 +38,7 @@ public class PerformanceTest {
      *     highVolumeGetRewards: 100,000 users within 20 minutes:
 	 *          assertTrue(TimeUnit.MINUTES.toSeconds(20) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
 	 */
-/*
+
 	@Autowired
 	private UserService userService;
 	@Autowired
@@ -48,6 +49,7 @@ public class PerformanceTest {
 	private RewardsService rewardsService;
 
 	@Test
+	@Disabled
 	public void highVolumeTrackLocation() {
 		StopWatch stopWatch = new StopWatch();
 		List<User> allUsers = userService.getAllUsers();
@@ -77,6 +79,7 @@ public class PerformanceTest {
 	}
 
 	@Test
+	@Disabled
 	public void highVolumeGetRewards() {
 		StopWatch stopWatch = new StopWatch();
 		Attraction attraction = gpsUtilService.getAttractions().get(0);
@@ -104,5 +107,5 @@ public class PerformanceTest {
 		System.out.println("highVolumeGetRewards: Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
 		assertTrue(TimeUnit.MINUTES.toSeconds(20) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
 	}
-*/
+
 }

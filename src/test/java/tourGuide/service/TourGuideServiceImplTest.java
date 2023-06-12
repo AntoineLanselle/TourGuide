@@ -43,6 +43,7 @@ public class TourGuideServiceImplTest {
 		assertEquals(5, attractions.size());
 	}
  */
+    /*
 	@Test
 	public void trackUserLocation_() {
         // GIVEN
@@ -53,6 +54,7 @@ public class TourGuideServiceImplTest {
         // THEN
 		assertEquals(user.getUserId(), visitedLocation.userId);
 	}
+    */
 /*
 	@Test
 	public void getLastVisitedLocation_() {

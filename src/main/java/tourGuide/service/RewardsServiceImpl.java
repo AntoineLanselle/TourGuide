@@ -35,7 +35,7 @@ public class RewardsServiceImpl implements RewardsService {
     private int defaultProximityBuffer = 10;
     private int proximityBuffer = defaultProximityBuffer;
     private int attractionProximityRange = 200;
-    private final ExecutorService executorService = Executors.newFixedThreadPool(1000);
+    private final ExecutorService executorService = Executors.newFixedThreadPool(350);
 
     @Override
     public void calculateRewards(User user) {

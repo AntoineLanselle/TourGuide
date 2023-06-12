@@ -32,7 +32,7 @@ public class TourGuideServiceImpl extends Thread implements TourGuideService  {
     @Autowired
     private RewardsService rewardsService;
 
-    private ExecutorService executorService = Executors.newFixedThreadPool(10000);
+    private ExecutorService executorService = Executors.newFixedThreadPool(70);
 
     @Override
     public List<TouristAttractionDetailsDTO> getNearbyAttractions(User user) throws ExecutionException, InterruptedException {
