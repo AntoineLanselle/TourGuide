@@ -38,18 +38,6 @@ public class TripPricerServiceImplTest {
         assertEquals(providers, testResult);
     }
 
-    @Test
-    public void getProviderName_ShouldReturnStringOfProviderName() {
-        // GIVEN
-        when(tripPricerRepo.getProviderName("test-server-api-key", 1)).thenReturn("providerName");
-
-        // WHEN
-        String testResult = tripPricerService.getProviderName("test-server-api-key", 1);
-
-        // THEN
-        assertEquals("providerName", testResult);
-    }
-
     /*
     @Test
     public void getTripDeals_ShouldReturnListOfProvider() {

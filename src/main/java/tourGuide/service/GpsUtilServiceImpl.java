@@ -27,13 +27,13 @@ public class GpsUtilServiceImpl implements GpsUtilService {
 
     @Override
     public List<Attraction> getAttractions() {
-        logger.info("Getting all attractions from GpsUtilRepository");
+        logger.info("Get all attractions from GpsUtilRepository");
         return gpsUtil.getAttractions();
     }
 
     @Override
     public VisitedLocation getUserLocation(UUID userId) {
-        logger.info("Getting location of user with id: " + userId.toString());
+        logger.info("Get location of user: " + userId.toString() + " from gpsUtilRepository");
         Locale.setDefault(Locale.ENGLISH);
         return gpsUtil.getUserLocation(userId);
     }

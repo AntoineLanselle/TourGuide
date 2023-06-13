@@ -34,13 +34,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAllUsers() {
-        logger.info("Getting all users from userRepository");
+        logger.info("Get all users from userRepository");
         return userRepository.getUsersList().values().stream().collect(Collectors.toList());
     }
 
     @Override
     public void addUser(User user) {
-        logger.info("Trying to add user: " + user.getUserName() + " in userRepository");
+        logger.info("Try to add user: " + user.getUserName() + " in userRepository");
         if (!userRepository.getUsersList().containsKey(user.getUserName())) {
             userRepository.getUsersList().put(user.getUserName(), user);
             logger.info("User: " + user.getUserName() + " has been added in userRepository");

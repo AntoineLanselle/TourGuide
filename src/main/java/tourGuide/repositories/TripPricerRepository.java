@@ -25,8 +25,4 @@ public class TripPricerRepository {
         return tripPricer.getPrice(apiKey, attractionId, adults, children, nightsStay, rewardsPoints);
     }
 
-    public String getProviderName(String apiKey, int adults) {
-        return tripPricer.getProviderName(apiKey, adults);
-    }
-
 }

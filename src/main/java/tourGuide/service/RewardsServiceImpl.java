@@ -39,7 +39,7 @@ public class RewardsServiceImpl implements RewardsService {
 
     @Override
     public void calculateRewards(User user) {
-        logger.atInfo().log("Calculating rewards of user " + user.getUserName());
+        logger.atInfo().log("Calculate rewards of user " + user.getUserName());
 
         CopyOnWriteArrayList<VisitedLocation> userLocations = new CopyOnWriteArrayList<>(user.getVisitedLocations());
         List<Attraction> attractions = gpsUtil.getAttractions();
@@ -52,7 +52,8 @@ public class RewardsServiceImpl implements RewardsService {
                         CompletableFuture.runAsync(()-> {
                             if(user.getUserRewards().stream().filter(r -> r.attraction.attractionName.equals(attr.attractionName)).count() == 0) {
                                 if(nearAttraction(visitedLocation, attr)) {
-                                    user.addUserReward( new UserReward(visitedLocation, attr,  rewardsCentral.getAttractionRewardPoints(attr.attractionId, user.getUserId())));
+                                    logger.atInfo().log("Add reward to: " + user.getUserName() + " for attraction: " + attr.attractionName);
+                                    user.addUserReward( new UserReward(visitedLocation, attr,  getRewardPoints(attr, user)));
                                 }
                             }
                         },executorService)

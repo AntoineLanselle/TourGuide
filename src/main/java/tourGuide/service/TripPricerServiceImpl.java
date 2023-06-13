@@ -31,12 +31,8 @@ public class TripPricerServiceImpl implements TripPricerService {
 
     @Override
     public List<Provider> getPrice(String apiKey, UUID attractionId, int adults, int children, int nightsStay, int rewardsPoints) {
+        logger.atInfo().log("Get offers from TripPricer corresponding to the user's preferences");
         return tripPricer.getPrice(apiKey, attractionId, adults, children, nightsStay, rewardsPoints);
-    }
-
-    @Override
-    public String getProviderName(String apiKey, int adults) {
-        return tripPricer.getProviderName(apiKey, adults);
     }
 
     /**
@@ -59,6 +55,7 @@ public class TripPricerServiceImpl implements TripPricerService {
                 userPreferences.getTripDuration(),
                 cumulativeRewardPoints);
 
+        logger.atInfo().log("Filter trip deals within the user's budget");
         List<Provider> providersPrefPrice = providers
                 .stream()
                 .filter(c -> Money.of(BigDecimal.valueOf(c.price), userPreferences.getCurrency()).isGreaterThanOrEqualTo(userPreferences.getLowerPricePoint())

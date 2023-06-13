@@ -40,12 +40,14 @@ public class TourGuideServiceImpl extends Thread implements TourGuideService  {
         NavigableMap<Double, Attraction> nearbyAttractions = new TreeMap<>() ;
         Location userLocation = trackUserLocation(user).get().location;
 
-        // on recupere toutes les attractions et on calcule leurs distance avec l utilisateur
+        // we collect all the attractions and calculate their distance from the user
         for (Attraction attraction : gpsUtilService.getAttractions()) {
             Location attractionLocation = new Location(attraction.latitude, attraction.longitude);
             nearbyAttractions.put(rewardsService.getDistance(userLocation, attractionLocation), attraction);
         }
-        //on recupere les 5 plus proches et on créé un DTO pour chacun
+
+        logger.info("Calculation of the five nearest attractions to the user");
+        // we collect the 5 nearest and create a DTO for each one
         for(int i = 0; i < 5; i++) {
             Map.Entry<Double, Attraction> attractionMap = nearbyAttractions.pollFirstEntry();
             Attraction attraction = attractionMap.getValue();
@@ -59,7 +61,7 @@ public class TourGuideServiceImpl extends Thread implements TourGuideService  {
 
     @Override
     public CompletableFuture<VisitedLocation> trackUserLocation(User user) {
-        logger.info("Track Location for user: " + user.getUserName());
+        logger.info("Track Location of user: " + user.getUserName());
         return CompletableFuture.supplyAsync(() -> gpsUtilService.getUserLocation(user.getUserId()), executorService)
                 .thenApply(visitedLocation -> {
                     user.addToVisitedLocations(visitedLocation);
@@ -70,6 +72,7 @@ public class TourGuideServiceImpl extends Thread implements TourGuideService  {
 
     @Override
     public VisitedLocation getLastVisitedLocation(User user) throws ExecutionException, InterruptedException {
+        logger.info("Get last visited location of user: " + user.getUserName());
         VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ? user.getLastVisitedLocation()
                 : trackUserLocation(user).get();
         return visitedLocation;
@@ -77,8 +80,10 @@ public class TourGuideServiceImpl extends Thread implements TourGuideService  {
 
     @Override
     public Map<String, Object> getAllCurrentLocations(List<User> allUsers) throws ExecutionException, InterruptedException {
+        logger.info("Search for the location of all users");
         Map<String, Object> currentLocations = new HashMap<String, Object>();
         for (User user : allUsers) {
+            logger.info("Get current location of user: " + user.getUserName());
             Map<String, Double> userCoord = new HashMap<String, Double>();
             VisitedLocation userLocation = getLastVisitedLocation(user);
             userCoord.put("longitude", userLocation.location.longitude);
