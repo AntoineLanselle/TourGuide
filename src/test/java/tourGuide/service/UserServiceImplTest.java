@@ -17,16 +17,12 @@ import tourGuide.repositories.UserRepository;
 
 import javax.money.Monetary;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -53,6 +49,7 @@ public class UserServiceImplTest {
     @Test
     public void getUser_ShouldReturnUser() {
         // GIVEN
+        //doReturn(users.get(0)).when(userRepository.getUsersList()).get("userName0");
         when(userRepository.getUsersList().get("userName0")).thenReturn(users.get(0));
 
         // WHEN
@@ -65,6 +62,7 @@ public class UserServiceImplTest {
     @Test
     public void getAllUsers_ShouldReturnListOfUsers() {
         // GIVEN
+        // doReturn(users).when(userRepository.getUsersList()).values().stream().collect(Collectors.toList());
         when(userRepository.getUsersList().values().stream().collect(Collectors.toList())).thenReturn(users);
 
         // WHEN

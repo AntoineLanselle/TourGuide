@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="tourGuide.service.RewardsServiceImplTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2023-06-14T11:41:27" hostname="DESKTOP-TI7IG84" time="2.359">
+  <properties/>
+  <testcase name="calculateRewards_ShouldAddRewardToUser()" classname="tourGuide.service.RewardsServiceImplTest" time="2.359"/>
+  <system-out><![CDATA[13:41:29.585 [Test worker] INFO tourGuide.service.RewardsServiceImpl -- Calculate rewards of user userName
+Loading...
+13:41:29.597 [pool-1-thread-1] INFO tourGuide.service.RewardsServiceImpl -- Add reward to: userName for attraction: attraction0
+13:41:29.597 [pool-1-thread-2] INFO tourGuide.service.RewardsServiceImpl -- Add reward to: userName for attraction: attraction1
+]]></system-out>
+  <system-err><![CDATA[juin 14, 2023 1:41:29 PM org.javamoney.moneta.DefaultMonetaryContextFactory createMonetaryContextNonNullConfig
+INFO: Using custom MathContext: precision=256, roundingMode=HALF_EVEN
+]]></system-err>
+</testsuite>

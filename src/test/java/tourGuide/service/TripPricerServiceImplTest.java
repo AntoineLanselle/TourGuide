@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import tourGuide.domain.User;
+import tourGuide.domain.UserPreferences;
 import tourGuide.repositories.TripPricerRepository;
 import tripPricer.Provider;
 
@@ -38,17 +39,35 @@ public class TripPricerServiceImplTest {
         assertEquals(providers, testResult);
     }
 
-    /*
+
     @Test
     public void getTripDeals_ShouldReturnListOfProvider() {
         // GIVEN
+        List<Provider> tripDeals = new ArrayList<Provider>();
+        tripDeals.add(new Provider(UUID.randomUUID(), "name0", 100.0));
+        tripDeals.add(new Provider(UUID.randomUUID(), "name1", 150.0));
+        tripDeals.add(new Provider(UUID.randomUUID(), "name2", 75.50));
+        tripDeals.add(new Provider(UUID.randomUUID(), "name3", 195.68));
+        tripDeals.add(new Provider(UUID.randomUUID(), "name4", 453.20));
+
         User user = new User(UUID.randomUUID(), "userName", "phone", "email");
+        UserPreferences userPreferences = user.getUserPreferences();
+        int cumulativeRewardPoints = user.getUserRewards().stream().mapToInt(i -> i.getRewardPoints()).sum();
+
+        when(tripPricerService.getPrice(
+                "test-server-api-key",
+                user.getUserId(),
+                userPreferences.getNumberOfAdults(),
+                userPreferences.getNumberOfChildren(),
+                userPreferences.getTripDuration(),
+                cumulativeRewardPoints)
+        ).thenReturn(tripDeals);
 
         // WHEN
-        List<Provider> providers = tripPricerService.getTripDeals(user);
+        List<Provider> testResult = tripPricerService.getTripDeals(user);
 
         // THEN
-        assertEquals(10, providers.size());
+        assertEquals(tripDeals, testResult);
     }
-*/
+
 }
