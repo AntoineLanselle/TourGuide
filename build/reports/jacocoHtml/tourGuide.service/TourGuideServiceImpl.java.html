@@ -22,16 +22,16 @@ import java.util.concurrent.Executors;
  * @author Antoine Lanselle
  */
 @Service
-<span class="nc" id="L25">public class TourGuideServiceImpl extends Thread implements TourGuideService  {</span>
+<span class="fc" id="L25">public class TourGuideServiceImpl extends Thread implements TourGuideService  {</span>
 
-<span class="nc" id="L27">    private Logger logger = LoggerFactory.getLogger(TourGuideServiceImpl.class);</span>
+<span class="fc" id="L27">    private Logger logger = LoggerFactory.getLogger(TourGuideServiceImpl.class);</span>
 
     @Autowired
     private GpsUtilService gpsUtilService;
     @Autowired
     private RewardsService rewardsService;
 
-<span class="nc" id="L34">    private ExecutorService executorService = Executors.newFixedThreadPool(70);</span>
+<span class="fc" id="L34">    private ExecutorService executorService = Executors.newFixedThreadPool(70);</span>
 
     @Override
     public List&lt;TouristAttractionDetailsDTO&gt; getNearbyAttractions(User user) throws ExecutionException, InterruptedException {
