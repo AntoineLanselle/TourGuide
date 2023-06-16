@@ -6,7 +6,6 @@ import javax.money.CurrencyUnit;
 import javax.money.Monetary;
 import java.math.BigDecimal;
 
-
 public class UserPreferences {
 
     private int attractionProximity = Integer.MAX_VALUE;

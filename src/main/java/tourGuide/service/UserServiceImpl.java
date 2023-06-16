@@ -27,17 +27,34 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
+    /**
+     * Returns the User with the userName in parameter.
+     *
+     * @param userName a String of the userName of the User we want to found.
+     *
+     * @return a user with the username specified in the parameter if it exists, null otherwise.
+     */
     @Override
     public User getUser(String userName) {
         return userRepository.getUsersList().get(userName);
     }
 
+    /**
+     * Returns all the Users in the respository.
+     *
+     * @return a List of Users containing all Users in repository.
+     */
     @Override
     public List<User> getAllUsers() {
         logger.info("Get all users from userRepository");
         return userRepository.getUsersList().values().stream().collect(Collectors.toList());
     }
 
+    /**
+     * Add the user specified in parameter in repository if it is not already there.
+     *
+     * @param user the User we want to add in repository
+     */
     @Override
     public void addUser(User user) {
         logger.info("Try to add user: " + user.getUserName() + " in userRepository");

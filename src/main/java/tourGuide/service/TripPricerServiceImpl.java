@@ -29,6 +29,19 @@ public class TripPricerServiceImpl implements TripPricerService {
     private TripPricerRepository tripPricer;
     private static final String tripPricerApiKey = "test-server-api-key";
 
+    /**
+     * Get the offers from trip pricer corresponding to the user's preferences but not its budget
+     * by giving user's preferences.
+     *
+     * @param apiKey a String of the api keey.
+     * @param attractionId the UUID of the attraction.
+     * @param adults a int number of adult.
+     * @param children a int number of children.
+     * @param nightsStay a int number of night stay.
+     * @param rewardsPoints a int number of rewards points.
+     *
+     * @return a list of providers which contains offers corresponding to the user's preferences but not its budget.
+     */
     @Override
     public List<Provider> getPrice(String apiKey, UUID attractionId, int adults, int children, int nightsStay, int rewardsPoints) {
         logger.atInfo().log("Get offers from TripPricer corresponding to the user's preferences");
@@ -39,8 +52,9 @@ public class TripPricerServiceImpl implements TripPricerService {
      * The function gets the user's trip deals by calling the tripPricer's getPrice function with the user's id, number of
      * adults, number of children, trip duration, and cumulatative reward points
      *
-     * @param user The user object that contains the user's preferences and rewards.
-     * @return a list of providers.
+     * @param user The User that contains the user's preferences and rewards.
+     *
+     * @return a list of providers which contains offers corresponding to the user's preferences.
      */
     @Override
     public List<Provider> getTripDeals(User user) {

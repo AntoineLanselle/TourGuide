@@ -25,12 +25,22 @@ public class GpsUtilServiceImpl implements GpsUtilService {
     @Autowired
     private GpsUtilRepository gpsUtil;
 
+    /**
+     * Returns a list of all attractions in repository.
+     *
+     * @return a List of all attractions.
+     */
     @Override
     public List<Attraction> getAttractions() {
         logger.info("Get all attractions from GpsUtilRepository");
         return gpsUtil.getAttractions();
     }
 
+    /**
+     * Returns the location of the user.
+     *
+     * @return the last VisitedLocation of the user.
+     */
     @Override
     public VisitedLocation getUserLocation(UUID userId) {
         logger.info("Get location of user: " + userId.toString() + " from gpsUtilRepository");
