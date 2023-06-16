@@ -33,6 +33,16 @@ public class TourGuideServiceImpl extends Thread implements TourGuideService  {
 
     private ExecutorService executorService = Executors.newFixedThreadPool(70);
 
+    /**
+     * Returns the 5 attractions closest to the user in parameter.
+     *
+     * @param user the User whose nearby attractions you want.
+     *
+     * @return a List of tourist attraction details DTO of the 5 nearest attractions.
+     *
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
     @Override
     public List<TouristAttractionDetailsDTO> getNearbyAttractions(User user) throws ExecutionException, InterruptedException {
         List<TouristAttractionDetailsDTO> touristAttractionsDetailsList = new ArrayList<>();
@@ -58,6 +68,13 @@ public class TourGuideServiceImpl extends Thread implements TourGuideService  {
         return touristAttractionsDetailsList;
     }
 
+    /**
+     * Track the location of the user specified in parameter.
+     *
+     * @param user the User we want to track.
+     *
+     * @return CompletableFuture<VisitedLocation> the location of the user as a visited location.
+     */
     @Override
     public CompletableFuture<VisitedLocation> trackUserLocation(User user) {
         logger.info("Track Location of user: " + user.getUserName());
@@ -69,6 +86,16 @@ public class TourGuideServiceImpl extends Thread implements TourGuideService  {
                 });
     }
 
+    /**
+     * Return the last visited location of the user specified in parameter.
+     *
+     * @param user the User we want the last visited location.
+     *
+     * @return a visitedLocation of the last location of the user.
+     *
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
     @Override
     public VisitedLocation getLastVisitedLocation(User user) throws ExecutionException, InterruptedException {
         logger.info("Get last visited location of user: " + user.getUserName());
@@ -77,6 +104,17 @@ public class TourGuideServiceImpl extends Thread implements TourGuideService  {
         return visitedLocation;
     }
 
+    /**
+     * Return the location of all users in the list in parameter.
+     *
+     * @param allUsers a list of Users we want to have the current location.
+     *
+     * @return a Map<String, object> with the kay a String for user ID
+     * and value an other Map<String, Double> the Location of the user.
+     *
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
     @Override
     public Map<String, Object> getAllCurrentLocations(List<User> allUsers) throws ExecutionException, InterruptedException {
         logger.info("Search for the location of all users");
